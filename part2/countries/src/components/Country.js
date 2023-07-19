@@ -1,7 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Weather from './Weather'
 
-const Country = ({ countryName, capital, area, languages, flagSrc, showDetailsInitially }) => {
+const Country = ({ countryName, capital, area, languages, flagSrc, showDetailsInitially, capitalCoords }) => {
     const [showDetails, setShowDetails] = useState(showDetailsInitially)
+    const [apiKey, setApiKey] = useState(null)
+
+    useEffect(() => {
+        setApiKey(process.env.REACT_APP_WEATHER_API_KEY)
+    }, [])
 
     const imgStyle = {
         borderColor: 'black',
@@ -36,6 +42,9 @@ const Country = ({ countryName, capital, area, languages, flagSrc, showDetailsIn
                 {languageNames.map(lang => <li key={lang}>{lang}</li>)}
             </ul>
             <img src={flagSrc} style={imgStyle}></img>
+            {apiKey !== null
+                ? <Weather capitalName={capital} latitude={capitalCoords[0]} longitude={capitalCoords[1]} apiKey={apiKey} />
+                : null}
         </div>
     )
 }

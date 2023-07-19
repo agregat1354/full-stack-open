@@ -35,6 +35,7 @@ function App() {
             area={singleCountryObject.area}
             languages={singleCountryObject.languages}
             flagSrc={singleCountryObject.flags.png}
+            capitalCoords={singleCountryObject.capitalInfo.latlng}
             showDetailsInitially={true}
           />
           :
@@ -46,6 +47,7 @@ function App() {
               area={country.area}
               languages={country.languages}
               flagSrc={country.flags.png}
+              capitalCoords={country.capitalInfo.latlng}
               showDetailsInitially={false}
             />
           )
