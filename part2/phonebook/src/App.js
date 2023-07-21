@@ -1,6 +1,5 @@
 import './index.css'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import phonebookService from './services/phonebook'
 import Notification from './components/Notification'
 
@@ -34,7 +33,7 @@ const Persons = ({ persons, handleDelete }) => {
   console.log(persons)
   return (
     <>
-      {persons.map(person => <Person key={person.name} name={person.name} number={person.number} handleDelete={() => handleDelete(person.id)} />)}
+      {persons.map(person => <Person key={person.id} name={person.name} number={person.number} handleDelete={() => handleDelete(person.id)} />)}
     </>
   )
 }
@@ -53,9 +52,9 @@ const App = () => {
       name: "Mark Delete",
       number: "777"
     }
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons([...response.data, nonExistantEntry]))
+    phonebookService
+      .getAll()
+      .then(initialPersons => setPersons([...initialPersons, nonExistantEntry]))
   }, [])
 
   const handleSubmit = (e) => {
