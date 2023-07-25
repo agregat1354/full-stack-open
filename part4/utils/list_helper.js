@@ -105,8 +105,6 @@ const mostLikes = blogs => {
     return { author: maxAuthor, likes: maxLikes }
 }
 
-console.log(mostLikes(blogs))
-
 module.exports = {
     dummy,
     totalLikes,
