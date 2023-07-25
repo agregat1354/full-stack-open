@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const dummy = blogs => {
     return 1
 }
@@ -61,10 +63,54 @@ const favouriteBlog = blogs => {
     return { title: favouriteBlog.title, author: favouriteBlog.author, likes: favouriteBlog.likes }
 }
 
-console.log(favouriteBlog(blogs))
+const mostBlogs = blogs => {
+    if (blogs.length === 0) return null
+    const authorCounts = _.countBy(blogs, blog => blog.author)
+
+    let maxAuthor = null
+    let maxCnt = null
+
+    for (const [author, blogCnt] of Object.entries(authorCounts)) {
+        if (maxAuthor === null || blogCnt > maxCnt) {
+            maxAuthor = author
+            maxCnt = blogCnt
+        }
+    }
+
+
+    return { author: maxAuthor, blogs: maxCnt }
+}
+
+const mostLikes = blogs => {
+    if (blogs.length === 0) return null
+
+    const likeCnts = {}
+    blogs.forEach(blog => {
+        if (likeCnts.hasOwnProperty(blog.author)) {
+            likeCnts[blog.author] += blog.likes
+        } else {
+            likeCnts[blog.author] = blog.likes
+        }
+    })
+
+    let maxAuthor = null
+    let maxLikes = null
+    for (const [author, likes] of Object.entries(likeCnts)) {
+        if (author === null || likes > maxLikes) {
+            maxAuthor = author
+            maxLikes = likes
+        }
+    }
+
+    return { author: maxAuthor, likes: maxLikes }
+}
+
+console.log(mostLikes(blogs))
 
 module.exports = {
     dummy,
     totalLikes,
-    favouriteBlog
+    favouriteBlog,
+    mostBlogs,
+    mostLikes
 }
