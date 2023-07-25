@@ -76,6 +76,11 @@ const App = () => {
               setMessage(null)
             }, 5000)
           })
+          .catch(error => {
+            setMessageTypeClass('error')
+            setMessage(error.response.data.error)
+            setTimeout(() => setMessage(null), 5000)
+          })
       }
     } else {
       phonebookService
@@ -87,6 +92,11 @@ const App = () => {
           setTimeout(() => [
             setMessage(null)
           ], 5000)
+        })
+        .catch(error => {
+          setMessageTypeClass('error')
+          setMessage(error.response.data.error)
+          setTimeout(() => setMessage(null), 5000)
         })
     }
 
