@@ -1,5 +1,6 @@
 const dummy = require('../utils/list_helper.js').dummy
 const totalLikes = require('../utils/list_helper.js').totalLikes
+const favouriteBlog = require('../utils/list_helper.js').favouriteBlog
 
 
 test('dummy test', () => {
@@ -73,4 +74,85 @@ describe('total likes', () => {
     test('if blogs in array have sum of 0 likes, return 0', () => {
         expect(totalLikes([blogs[4]])).toBe(0)
     })
+})
+
+describe('favourite blog', () => {
+    const blogs = [
+        {
+            _id: "5a422a851b54a676234d17f7",
+            title: "React patterns",
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/",
+            likes: 7,
+            __v: 0
+        },
+        {
+            _id: "5a422aa71b54a676234d17f8",
+            title: "Go To Statement Considered Harmful",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+            likes: 5,
+            __v: 0
+        },
+        {
+            _id: "5a422b3a1b54a676234d17f9",
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes: 12,
+            __v: 0
+        },
+        {
+            _id: "5a422b891b54a676234d17fa",
+            title: "First class tests",
+            author: "Robert C. Martin",
+            url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+            likes: 10,
+            __v: 0
+        },
+        {
+            _id: "5a422ba71b54a676234d17fb",
+            title: "TDD harms architecture",
+            author: "Robert C. Martin",
+            url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+            likes: 0,
+            __v: 0
+        },
+        {
+            _id: "5a422bc61b54a676234d17fc",
+            title: "Type wars",
+            author: "Robert C. Martin",
+            url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+            likes: 2,
+            __v: 0
+        }
+    ]
+
+    test('when there are no blogs, return null', () => {
+        expect(favouriteBlog([])).toBe(null)
+    })
+
+    test('when there are 2 blogs with highest amount of likes, return first one', () => {
+        expect(favouriteBlog([...blogs, {
+            _id: "5a422bc61b54a676234d17fc",
+            title: "Type wars",
+            author: "Robert C. Martin",
+            url: "http://blog.cleancoder.com/uncle-bob/2021/06/25/OnTypes.html",
+            likes: 12,
+            __v: 0
+        }])).toEqual({
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            likes: 12
+        })
+    })
+
+    test('when the highest like count is 0, return this post anyway', () => {
+        expect(favouriteBlog([blogs[4]])).toEqual({
+            title: "TDD harms architecture",
+            author: "Robert C. Martin",
+            likes: 0,
+        })
+    })
+
 })
