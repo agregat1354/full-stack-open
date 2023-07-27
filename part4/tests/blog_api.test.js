@@ -92,10 +92,40 @@ test('trying to create blog with missing required properties return status 400',
         .send(newNote)
         .expect(400)
 
-    console.log(response)
-
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+})
+
+test('delete valid blog', async () => {
+    const blogsBefore = await helper.blogsInDb()
+
+    await api
+        .delete(`/api/blogs/${blogsBefore[0].id}`)
+        .expect(204)
+
+    1
+
+
+    const blogsAfter = await helper.blogsInDb()
+    expect(blogsAfter.length).toBe(blogsBefore.length - 1)
+
+    const titles = blogsAfter.map(blog => blog.title)
+    expect(titles).not.toContain(blogsBefore[0].title)
+})
+
+test('return status 400 when trying to delete non existent blog', async () => {
+    const nonExistentId = await helper.nonExistentId()
+
+    const blogsBefore = await helper.blogsInDb()
+
+    await api
+        .delete(`/api/blogs/${nonExistentId}`)
+        .expect(400)
+
+    const blogsAfter = await helper.blogsInDb()
+
+    expect(blogsAfter.length).toBe(blogsBefore.length)
+
 })
 
 afterAll(async () => {
