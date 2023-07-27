@@ -77,7 +77,6 @@ const mostBlogs = blogs => {
         }
     }
 
-
     return { author: maxAuthor, blogs: maxCnt }
 }
 
