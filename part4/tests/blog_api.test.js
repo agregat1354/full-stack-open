@@ -128,6 +128,53 @@ test('return status 400 when trying to delete non existent blog', async () => {
 
 })
 
+test('succesfully update blog with valid request payload', async () => {
+    const blogsBefore = await helper.blogsInDb()
+    const blogToUpdate = blogsBefore[0]
+    const id = blogToUpdate.id
+    delete blogToUpdate.id
+    blogToUpdate.title = "Updated title"
+
+    const response = await api
+        .put(`/api/blogs/${id}`)
+        .send(blogToUpdate)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
+    const updatedBlog = response.body
+    const blogsAfter = await helper.blogsInDb()
+
+    titles = blogsAfter.map(blog => blog.title)
+
+    expect(blogsAfter.length).toBe(blogsBefore.length)
+    expect(blogToUpdate.title).toBe(updatedBlog.title)
+    expect(titles).toContain(updatedBlog.title)
+})
+
+test('return code 400 after trying to update non existent blog', async () => {
+    const nonExistentId = await helper.nonExistentId()
+
+    const blogsBefore = await helper.blogsInDb()
+
+    const updatedBlog = {
+        title: "title",
+        author: "author",
+        url: "url",
+        likes: 0
+    }
+
+    await api
+        .put(`/api/blogs/${nonExistentId}`)
+        .send(updatedBlog)
+        .expect(400)
+
+    const blogsAfter = await helper.blogsInDb()
+
+    expect(blogsAfter).toEqual(blogsBefore)
+
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
