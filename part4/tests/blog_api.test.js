@@ -81,6 +81,23 @@ test('blogs without likes property have it set to 0 by default', async () => {
     expect(addedBlog.likes).toBe(0)
 })
 
+test('trying to create blog with missing required properties return status 400', async () => {
+    const newNote = {
+        author: "John test",
+        likes: 2
+    }
+
+    const response = await api
+        .post('/api/blogs')
+        .send(newNote)
+        .expect(400)
+
+    console.log(response)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
