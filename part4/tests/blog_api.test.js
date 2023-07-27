@@ -59,6 +59,27 @@ test('new blog entry can be added', async () => {
     expect(addedBlog.title).toBe('Blog test')
 })
 
+test('blogs without likes property have it set to 0 by default', async () => {
+
+    const newBlog = {
+        title: "Blog test",
+        author: "John Test",
+        url: "https://www.blogs.com/test",
+    }
+
+    const response = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const addedBlog = response.body
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+    expect(addedBlog.title).toBe('Blog test')
+    expect(addedBlog.likes).toBeDefined()
+    expect(addedBlog.likes).toBe(0)
+})
 
 afterAll(async () => {
     await mongoose.connection.close()
