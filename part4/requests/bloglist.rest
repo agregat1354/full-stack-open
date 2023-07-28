@@ -60,11 +60,18 @@ Content-Type: application/json
 # create new blog with jwt auth
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGMzZTE0MmVjNTIxZGZlZWNjN2ZlMzQiLCJpYXQiOjE2OTA1Njk5Mzd9.4syMiukO5pPTEcBrllcH6YkoVgLncKiMxQZfw0ngD80
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MTFjNjk1NDNmNzRmNzY4YzA3YTMiLCJpYXQiOjE2OTA1NzEyMTJ9.PNpjtR5rPn8Dt2CIxfKYgweTIbfpkgjjOkvv4OZwzdI
 
 {
-    "title": "Test blog",
+    "title": "Test blog to delete",
     "author": "Mark Test",
     "url": "https://www.blogs.com/test",
     "likes": 142
 }
+
+###
+
+# delete blog
+DELETE http://localhost:3003/api/blogs/64c4122d9543f74f768c07b0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MTFjNjk1NDNmNzRmNzY4YzA3YTMiLCJpYXQiOjE2OTA1NzEyMTJ9.PNpjtR5rPn8Dt2CIxfKYgweTIbfpkgjjOkvv4OZwzdI
+
