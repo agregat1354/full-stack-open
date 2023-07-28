@@ -2,6 +2,7 @@ const app = require('../app.js')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
 const Blog = require('../models/blog.js')
+const User = require('../models/user.js')
 
 const api = supertest(app)
 
@@ -173,6 +174,88 @@ test('return code 400 after trying to update non existent blog', async () => {
 
     expect(blogsAfter).toEqual(blogsBefore)
 
+})
+
+
+describe.only('user tests', () => {
+
+    beforeEach(async () => {
+        await User.deleteMany({})
+        const promiseArray = helper.initialUsers.map(user => new User(user).save())
+        await Promise.all(promiseArray)
+    })
+
+    test('when sending valid payload, valid user can be added', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: "mariuszbrz",
+            name: "Mariusz Brzózka",
+            password: "mariuszek321"
+        }
+
+        const response = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const newlyAddedUser = response.body
+        const usersAtEnd = await helper.usersInDb()
+
+        expect(usersAtEnd.length).toBe(usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(user => user.username)
+
+        expect(usernames).toContain(newUser.username)
+        expect(newlyAddedUser.username).toBeDefined()
+        expect(newlyAddedUser.name).toBeDefined()
+        expect(newlyAddedUser.id).toBeDefined()
+    })
+
+    test('adding user with non-unique username should fail with suitable status code and error message', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const nonUniqueUser = {
+            "username": "grzegorzb",
+            "name": "Grzegorz Bażant",
+            "password": "supersecretpassword"
+        }
+
+        const response = await api
+            .post('/api/users')
+            .send(nonUniqueUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+
+        expect(response.body.error).toBeDefined()
+
+        expect(usersAtEnd.length).toBe(usersAtStart.length)
+
+    })
+
+    test('adding user with too short password should fail with suitable status code and error message', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const userWithTooShortPassword = {
+            "username": "grzegorzb",
+            "name": "Grzegorz Bażant",
+            "password": "supersecretpassword"
+        }
+
+        const response = await api
+            .post('/api/users')
+            .send(userWithTooShortPassword)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(response.body.error).toBeDefined()
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd.length).toBe(usersAtStart.length)
+    })
 })
 
 afterAll(async () => {

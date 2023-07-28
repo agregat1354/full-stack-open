@@ -12,3 +12,28 @@ content-type: application/json
     "url": "https://www.youtube.com",
     "likes": 1354
 }
+
+
+###
+
+# create new user
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "grzegorzb",
+    "name": "Grzegorz Bażant",
+    "password": "supersecretpassword"
+}
+
+###
+
+# create new user
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "mluukkai",
+    "name": "Matti Luukkainen",
+    "password": "salainen"
+}
