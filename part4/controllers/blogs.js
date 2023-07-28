@@ -3,6 +3,7 @@ const Blog = require('../models/blog.js')
 const User = require('../models/user.js')
 const jwt = require('jsonwebtoken')
 const config = require('../utils/config.js')
+const blog = require('../models/blog.js')
 
 
 /*
@@ -23,17 +24,7 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const { title, author, url, likes } = request.body
 
-    const decodedToken = jwt.verify(request.token, config.SECRET)
-
-    if (!(decodedToken.id && decodedToken.username)) {
-        return response.status(401).json({ error: 'invalid token' })
-    }
-
-    const user = await User.findOne({ username: decodedToken.username })
-    if (!user) {
-        return response.status(401).json({ error: 'invalid token' })
-    }
-
+    const user = request.user
 
     const blog = new Blog({ title, author, url, likes })
 
@@ -50,23 +41,15 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
 
-    const decodedToken = jwt.verify(request.token, config.SECRET)
+    const user = request.user
 
-    if (!(decodedToken.id && decodedToken.username)) {
-        return response.status(401).json({ error: 'invalid token' })
-    }
+    const blogToDelete = await Blog.findById(id)
 
-    const user = await User.findOne({ username: decodedToken.username })
-
-    if (!user) {
-        return response.status(401).json({ error: 'invalid token' })
-    }
-
-    if (!user._id.toString() === decodedToken.id) {
+    if (user._id.toString() !== blogToDelete.user.toString()) {
         return response.status(401).json({ error: 'you are not allowed to delete this blog' })
     }
 
-    const deletedBlog = await Blog.findByIdAndRemove(id)
+    const deletedBlog = await Blog.findByIdAndDelete(blogToDelete._id.toString())
 
     user.blogs = user.blogs.filter(blog => blog._id.toString() !== id)
     await user.save()

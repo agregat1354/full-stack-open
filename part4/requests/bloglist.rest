@@ -60,7 +60,7 @@ Content-Type: application/json
 # create new blog with jwt auth
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MTFjNjk1NDNmNzRmNzY4YzA3YTMiLCJpYXQiOjE2OTA1NzEyMTJ9.PNpjtR5rPn8Dt2CIxfKYgweTIbfpkgjjOkvv4OZwzdI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MWFhZGM1MTgxYTc5OTM5MmNjNmQiLCJpYXQiOjE2OTA1NzM2NTF9.Qp4Fki-Hu30IZzQUt7TMgsmR7CtCI_RWnYswwIyDa-A
 
 {
     "title": "Test blog to delete",
@@ -72,6 +72,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sd
 ###
 
 # delete blog
-DELETE http://localhost:3003/api/blogs/64c4122d9543f74f768c07b0
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MTFjNjk1NDNmNzRmNzY4YzA3YTMiLCJpYXQiOjE2OTA1NzEyMTJ9.PNpjtR5rPn8Dt2CIxfKYgweTIbfpkgjjOkvv4OZwzdI
+DELETE http://localhost:3003/api/blogs/64c41b69f93ef55bde65310c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MWFhZGM1MTgxYTc5OTM5MmNjNmQiLCJpYXQiOjE2OTA1NzM2NTF9.Qp4Fki-Hu30IZzQUt7TMgsmR7CtCI_RWnYswwIyDa-A
+
+
 
