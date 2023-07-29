@@ -8,29 +8,99 @@ const api = supertest(app)
 
 const helper = require('./blog_helper.js')
 
+beforeAll(async () => {
+    await User.deleteMany({})
+    const newUser = {
+        username: "mariuszbrz",
+        name: "Mariusz Brzózka",
+        password: "mariuszek321"
+    }
+    const initialUsers = [...helper.initialUsers, newUser]
+    const promiseArray = initialUsers.map(user => {
+        return api
+            .post('/api/users')
+            .send(user)
+    })
+    await Promise.all(promiseArray)
+
+})
+
 beforeEach(async () => {
     await Blog.deleteMany({})
     const promiseArray = helper.initialBlogs.map(blog => new Blog(blog).save())
     await Promise.all(promiseArray)
+
+    const usersNewBlog = {
+        title: "Blog for testing",
+        author: 'irrelevant',
+        url: 'https://www.nonexistentwebsite/test',
+        likes: 15
+    }
+
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+
+    const blogCreationResponse = await api
+        .post('/api/blogs')
+        .send(usersNewBlog)
+        .auth(loginResponse.body.token, { type: 'bearer' })
+
 })
 
 test('api\'s get /api/blogs endpoint returns correct data', async () => {
 
+    const blogsBeforeGet = await helper.blogsInDb()
+
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
+    // another valid option for sending auth
+    // .set('authorization', `Bearer ${loginResponse.token}`)
     const response = await api
         .get('/api/blogs')
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
     const blogs = response.body
     const titles = blogs.map(blog => blog.title)
 
-    expect(blogs.length).toBe(helper.initialBlogs.length)
+    expect(blogs.length).toBe(blogsBeforeGet.length)
     expect(titles).toContain('Learn react')
 })
 
 test('responses are in correct form (they contain id instead of _id)', async () => {
+
+
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
     const response = await api
         .get('/api/blogs')
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
@@ -41,6 +111,20 @@ test('responses are in correct form (they contain id instead of _id)', async () 
 })
 
 test('new blog entry can be added', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
     const newBlog = {
         title: "Blog test",
         author: "John Test",
@@ -51,16 +135,32 @@ test('new blog entry can be added', async () => {
     const response = await api
         .post('/api/blogs')
         .send(newBlog)
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
     const addedBlog = response.body
-    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length + 1)
     expect(addedBlog.title).toBe('Blog test')
 })
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..
+
 test('blogs without likes property have it set to 0 by default', async () => {
+
+    const blogsAtStart = await helper.blogsInDb()
+
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
 
     const newBlog = {
         title: "Blog test",
@@ -71,18 +171,34 @@ test('blogs without likes property have it set to 0 by default', async () => {
     const response = await api
         .post('/api/blogs')
         .send(newBlog)
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
     const addedBlog = response.body
-    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length + 1)
     expect(addedBlog.title).toBe('Blog test')
     expect(addedBlog.likes).toBeDefined()
     expect(addedBlog.likes).toBe(0)
 })
 
 test('trying to create blog with missing required properties return status 400', async () => {
+
+    const blogsAtStart = await helper.blogsInDb()
+
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
     const newNote = {
         author: "John test",
         likes: 2
@@ -91,36 +207,66 @@ test('trying to create blog with missing required properties return status 400',
     const response = await api
         .post('/api/blogs')
         .send(newNote)
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
 })
 
 test('delete valid blog', async () => {
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
+    const user = await User.findOne({ username: loginResponse.body.username }).populate('blogs')
+    const blog = user.blogs[0]
+
     const blogsBefore = await helper.blogsInDb()
 
-    await api
-        .delete(`/api/blogs/${blogsBefore[0].id}`)
-        .expect(204)
 
-    1
+    await api
+        .delete(`/api/blogs/${blog.id}`)
+        .auth(loginResponse.body.token, { type: 'bearer' })
+        .expect(204)
 
 
     const blogsAfter = await helper.blogsInDb()
     expect(blogsAfter.length).toBe(blogsBefore.length - 1)
 
     const titles = blogsAfter.map(blog => blog.title)
-    expect(titles).not.toContain(blogsBefore[0].title)
+    expect(titles).not.toContain(blog.title)
 })
 
 test('return status 400 when trying to delete non existent blog', async () => {
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
+
     const nonExistentId = await helper.nonExistentId()
 
     const blogsBefore = await helper.blogsInDb()
 
     await api
         .delete(`/api/blogs/${nonExistentId}`)
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(400)
 
     const blogsAfter = await helper.blogsInDb()
@@ -130,6 +276,19 @@ test('return status 400 when trying to delete non existent blog', async () => {
 })
 
 test('succesfully update blog with valid request payload', async () => {
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
+
     const blogsBefore = await helper.blogsInDb()
     const blogToUpdate = blogsBefore[0]
     const id = blogToUpdate.id
@@ -139,6 +298,7 @@ test('succesfully update blog with valid request payload', async () => {
     const response = await api
         .put(`/api/blogs/${id}`)
         .send(blogToUpdate)
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
@@ -154,6 +314,19 @@ test('succesfully update blog with valid request payload', async () => {
 })
 
 test('return code 400 after trying to update non existent blog', async () => {
+    const loginRequest = {
+        username: "mluukkai",
+        password: "salainen"
+    }
+
+    const loginResponse = await api
+        .post('/api/login')
+        .send(loginRequest)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+
+
     const nonExistentId = await helper.nonExistentId()
 
     const blogsBefore = await helper.blogsInDb()
@@ -168,6 +341,7 @@ test('return code 400 after trying to update non existent blog', async () => {
     await api
         .put(`/api/blogs/${nonExistentId}`)
         .send(updatedBlog)
+        .auth(loginResponse.body.token, { type: 'bearer' })
         .expect(400)
 
     const blogsAfter = await helper.blogsInDb()
@@ -177,19 +351,14 @@ test('return code 400 after trying to update non existent blog', async () => {
 })
 
 
-describe.only('user tests', () => {
+describe('user tests', () => {
 
-    beforeEach(async () => {
-        await User.deleteMany({})
-        const promiseArray = helper.initialUsers.map(user => new User(user).save())
-        await Promise.all(promiseArray)
-    })
 
     test('when sending valid payload, valid user can be added', async () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
-            username: "mariuszbrz",
+            username: "mariuszbrz1",
             name: "Mariusz Brzózka",
             password: "mariuszek321"
         }
@@ -242,7 +411,7 @@ describe.only('user tests', () => {
         const userWithTooShortPassword = {
             "username": "grzegorzb",
             "name": "Grzegorz Bażant",
-            "password": "supersecretpassword"
+            "password": "ss"
         }
 
         const response = await api
@@ -258,6 +427,11 @@ describe.only('user tests', () => {
     })
 })
 
+
 afterAll(async () => {
+
+    const userToDelete = await User.findOne({ username: 'mariuszbrz' })
+    await User.findByIdAndDelete(userToDelete._id)
+
     await mongoose.connection.close()
 })
