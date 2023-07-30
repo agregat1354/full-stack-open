@@ -1,7 +1,9 @@
+import './index.css'
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,6 +13,14 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationClassType, setNotificationClassType] = useState('info')
+
+  const showNotification = (messageText, messageType, durationInSeconds) => {
+    setNotificationClassType(messageType)
+    setNotificationMessage(messageText)
+    setTimeout(() => setNotificationMessage(null), durationInSeconds * 1000)
+  }
 
   useEffect(() => {
     const userJson = window.localStorage.getItem('loggedBlogappUser')
@@ -33,6 +43,7 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
+    showNotification('logged out', 'info', 5)
   }
 
   const handleLogin = async (e) => {
@@ -42,8 +53,9 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      showNotification('Succesfully logged in', 'info', 5)
     } catch (err) {
-      console.log(err)
+      showNotification(err.response.data.error, 'error', 5)
     }
   }
 
@@ -57,8 +69,9 @@ const App = () => {
     try {
       const responseBlog = await blogService.create(newBlog)
       setBlogs([...blogs, responseBlog])
+      showNotification(`a new blog ${responseBlog.title} by ${responseBlog.author} has been added`, 'info', 5)
     } catch (err) {
-      console.log(err)
+      showNotification(err.response.data.error, 'error', 5)
     }
   }
 
@@ -66,6 +79,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
+        <Notification text={notificationMessage} typeClass={notificationClassType} />
         {user.username} is logged in
         <button onClick={logout}>logout</button>
         <h2>create new</h2>
@@ -105,30 +119,31 @@ const App = () => {
 
   const loginForm = () => {
     return (
-      <form onSubmit={handleLogin}>
-        username
-        <input
-          type="text"
-          name="Username"
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
-        />
-        <br />
-        password
-        <input
-          type='password'
-          name='Password'
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
-        <br />
-        <button type='submit'>login</button>
-      </form>
+      <>
+        <h2>Log in to application</h2>
+        <Notification text={notificationMessage} typeClass={notificationClassType} />
+        <form onSubmit={handleLogin}>
+          username
+          <input
+            type="text"
+            name="Username"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+          <br />
+          password
+          <input
+            type='password'
+            name='Password'
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+          <br />
+          <button type='submit'>login</button>
+        </form>
+      </>
     )
   }
-
-
-  console.log('blogs: ', blogs)
 
   return (
     <>
