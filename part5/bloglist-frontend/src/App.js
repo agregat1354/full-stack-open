@@ -56,6 +56,17 @@ const App = () => {
     }
   };
 
+  const handleBlogUpdate = async (updatedBlogObject) => {
+    try {
+      const updatedBlog = await blogService.update(updatedBlogObject);
+      setBlogs(
+        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
     try {
@@ -83,7 +94,7 @@ const App = () => {
         <button onClick={logout}>logout</button>
         <h2>list of blogs</h2>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateBlog={handleBlogUpdate} />
         ))}
         <Togglable buttonLabel="new note" ref={blogFormRef}>
           <BlogForm createBlog={handleCreateNewBlog} />
