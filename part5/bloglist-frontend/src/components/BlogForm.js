@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+/* eslint-disable semi */
 import { useState } from "react";
 
 const BlogForm = ({ createBlog }) => {
