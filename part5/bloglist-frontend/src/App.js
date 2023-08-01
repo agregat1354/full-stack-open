@@ -81,10 +81,26 @@ const App = () => {
     }
   };
 
+  const handleBlogDelete = async (blogToDelete) => {
+    try {
+      if (
+        window.confirm(
+          `Remove blog ${blogToDelete.title} by ${blogToDelete.author}`
+        )
+      ) {
+        await blogService.deleteBlog(blogToDelete.id);
+        setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
+      }
+    } catch (err) {
+      showNotification(err.response.data.error, "error", 5);
+    }
+  };
+
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
     try {
       const responseBlog = await blogService.create(blogObject);
+      responseBlog.user = user;
       setBlogs([...blogs, responseBlog]);
       showNotification(
         `a new blog ${responseBlog.title} by ${responseBlog.author} has been added`,
@@ -108,7 +124,13 @@ const App = () => {
         <button onClick={logout}>logout</button>
         <h2>list of blogs</h2>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} updateBlog={handleBlogUpdate} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={handleBlogUpdate}
+            deleteBlog={handleBlogDelete}
+            isOwnedByCurrentUser={blog.user.username === user.username}
+          />
         ))}
         <Togglable buttonLabel="new note" ref={blogFormRef}>
           <BlogForm createBlog={handleCreateNewBlog} />

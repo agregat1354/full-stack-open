@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
   const [longFormVisible, setLongFormVisible] = useState(false);
 
   const blogStyle = {
@@ -24,8 +24,16 @@ const Blog = ({ blog, updateBlog }) => {
     updateBlog(updatedBlogObj);
   };
 
+  const handleDelete = () => {
+    deleteBlog(blog);
+  };
+
   const hideWhenLongFormVisible = { display: longFormVisible ? "none" : "" };
   const showWhenLongFormVisible = { display: longFormVisible ? "" : "none" };
+
+  const showWhenOwnedByCurrentUser = {
+    display: isOwnedByCurrentUser ? "" : "none",
+  };
 
   return (
     <div style={blogStyle}>
@@ -43,6 +51,10 @@ const Blog = ({ blog, updateBlog }) => {
         <button onClick={handleLike}>like</button>
         <br />
         {blog.author}
+        <span style={showWhenOwnedByCurrentUser}>
+          <br />
+          <button onClick={handleDelete}>remove</button>
+        </span>
       </div>
     </div>
   );
