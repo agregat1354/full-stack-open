@@ -32,7 +32,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) =>
+        setBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes))
+      );
   }, []);
 
   const logout = () => {
@@ -59,6 +63,16 @@ const App = () => {
   const handleBlogUpdate = async (updatedBlogObject) => {
     try {
       const updatedBlog = await blogService.update(updatedBlogObject);
+      // live sorting
+      /*
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      );
+      const updatedBlogsSorted = updatedBlogs.toSorted(
+        (b1, b2) => b2.likes - b1.likes
+      );
+      setBlogs(updatedBlogsSorted);
+      */
       setBlogs(
         blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
       );
