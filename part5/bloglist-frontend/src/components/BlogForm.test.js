@@ -5,11 +5,10 @@ import { render, screen } from "@testing-library/react";
 import BlogForm from "./BlogForm";
 
 describe("<BlogForm />", () => {
-  let container;
   const createBlog = jest.fn();
 
   beforeEach(() => {
-    container = render(<BlogForm createBlog={createBlog} />).container;
+    render(<BlogForm createBlog={createBlog} />).container;
   });
 
   test("when creating new blog, createBlog() event handler passed as prop is called with right details", async () => {
