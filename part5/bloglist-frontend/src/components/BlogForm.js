@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable semi */
+import PropTypes from "prop-types";
 import { useState } from "react";
 
 const BlogForm = ({ createBlog }) => {
@@ -21,6 +22,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
+          placeholder="title of the blog"
         />
         <br />
         author
@@ -28,6 +30,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={author}
           onChange={({ target }) => setAuthor(target.value)}
+          placeholder="blog's author"
         />
         <br />
         url
@@ -35,12 +38,17 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={url}
           onChange={({ target }) => setUrl(target.value)}
+          placeholder="e.g https://www.blogs.com/exampleBlog"
         />
         <br />
         <button type="submit">add blog</button>
       </form>
     </div>
   );
+};
+
+BlogForm.propTypes = {
+  createBlog: PropTypes.func.isRequired,
 };
 
 export default BlogForm;

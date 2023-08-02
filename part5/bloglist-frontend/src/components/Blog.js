@@ -37,11 +37,14 @@ const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
 
   return (
     <div style={blogStyle}>
-      <div style={hideWhenLongFormVisible}>
+      <div
+        className="short-blog-form-container"
+        style={hideWhenLongFormVisible}
+      >
         {blog.title} {blog.author}
         <button onClick={toggleLongFormVisibility}>view</button>
       </div>
-      <div style={showWhenLongFormVisible}>
+      <div className="long-blog-form-container" style={showWhenLongFormVisible}>
         {blog.title}
         <button onClick={toggleLongFormVisibility}>hide</button>
         <br />
