@@ -25,7 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add("createUser", function ({ username, name, password }) {
-  cy.request("POST", "http://localhost:3003/api/users", {
+  cy.request("POST", `${Cypress.env("BACKEND")}/users`, {
     username,
     name,
     password,
