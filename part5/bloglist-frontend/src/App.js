@@ -36,7 +36,8 @@ const App = () => {
       .getAll()
       .then((blogs) =>
         setBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes))
-      );
+      )
+      .catch((err) => console.log(err));
   }, []);
 
   const logout = () => {
