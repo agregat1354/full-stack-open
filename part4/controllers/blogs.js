@@ -1,80 +1,71 @@
-const blogsRouter = require('express').Router()
-const Blog = require('../models/blog.js')
-const User = require('../models/user.js')
-const jwt = require('jsonwebtoken')
-const config = require('../utils/config.js')
-const blog = require('../models/blog.js')
+const blogsRouter = require("express").Router();
+const Blog = require("../models/blog.js");
 
+blogsRouter.get("/", async (request, response) => {
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
+  response.status(200).json(blogs);
+});
 
-/*
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-        return authorization.replace('Bearer ', '')
-    }
-    return null
-}
-*/
+blogsRouter.post("/", async (request, response) => {
+  const { title, author, url, likes } = request.body;
 
-blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
-    response.status(200).json(blogs)
-})
+  const user = request.user;
 
-blogsRouter.post('/', async (request, response) => {
-    const { title, author, url, likes } = request.body
+  const blog = new Blog({ title, author, url, likes });
 
-    const user = request.user
+  blog.user = user.id;
 
-    const blog = new Blog({ title, author, url, likes })
+  user.blogs = user.blogs.concat(blog.id);
+  await user.save();
 
-    blog.user = user.id
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
+});
 
-    user.blogs = user.blogs.concat(blog.id)
-    await user.save()
+blogsRouter.delete("/:id", async (request, response) => {
+  const id = request.params.id;
 
-    const savedBlog = await blog.save()
-    response.status(201).json(savedBlog)
+  const user = request.user;
 
-})
+  const blogToDelete = await Blog.findById(id);
+  if (!blogToDelete) {
+    return response
+      .status(400)
+      .json({ error: `blog with id:${id} does not exist` });
+  }
 
-blogsRouter.delete('/:id', async (request, response) => {
-    const id = request.params.id
+  if (user._id.toString() !== blogToDelete.user.toString()) {
+    return response
+      .status(401)
+      .json({ error: "you are not allowed to delete this blog" });
+  }
 
-    const user = request.user
+  const deletedBlog = await Blog.findByIdAndDelete(blogToDelete._id.toString());
 
-    const blogToDelete = await Blog.findById(id)
-    if (!blogToDelete) {
-        return response.status(400).json({ error: `blog with id:${id} does not exist` })
-    }
+  user.blogs = user.blogs.filter((blog) => blog._id.toString() !== id);
+  await user.save();
 
-    if (user._id.toString() !== blogToDelete.user.toString()) {
-        return response.status(401).json({ error: 'you are not allowed to delete this blog' })
-    }
+  if (deletedBlog) {
+    response.status(204).end();
+  } else {
+    response.status(400).json({ error: "blog with given id does not exist" });
+  }
+});
 
-    const deletedBlog = await Blog.findByIdAndDelete(blogToDelete._id.toString())
+blogsRouter.put("/:id", async (request, response) => {
+  const { title, author, url, likes, user } = request.body;
 
-    user.blogs = user.blogs.filter(blog => blog._id.toString() !== id)
-    await user.save()
+  const updatedObject = await Blog.findByIdAndUpdate(
+    request.params.id,
+    { title, author, url, likes, user },
+    { runValidators: true, new: true, context: "query" }
+  );
 
-    if (deletedBlog) {
-        response.status(204).end()
-    } else {
-        response.status(400).json({ error: "blog with given id does not exist" })
-    }
-})
+  if (updatedObject) {
+    response.status(200).json(updatedObject);
+  } else {
+    response.status(400).end();
+  }
+});
 
-blogsRouter.put('/:id', async (request, response) => {
-    const { title, author, url, likes } = request.body
-
-    const updatedObject = await Blog.findByIdAndUpdate(request.params.id, { title, author, url, likes }, { runValidators: true, new: true, context: 'query' })
-
-    if (updatedObject) {
-        response.status(200).json(updatedObject)
-    } else {
-        response.status(400).end()
-    }
-})
-
-
-module.exports = blogsRouter
+module.exports = blogsRouter;
