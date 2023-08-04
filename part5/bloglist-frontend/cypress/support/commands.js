@@ -32,3 +32,13 @@ Cypress.Commands.add("createUser", function ({ username, name, password }) {
   });
   cy.visit("");
 });
+
+Cypress.Commands.add("login", function ({ username, password }) {
+  cy.request("POST", `${Cypress.env("BACKEND")}/login`, {
+    username,
+    password,
+  }).then((response) =>
+    localStorage.setItem("loggedBlogappUser", JSON.stringify(response.body))
+  );
+  cy.visit("");
+});

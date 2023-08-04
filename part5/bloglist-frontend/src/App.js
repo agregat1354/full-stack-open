@@ -133,7 +133,7 @@ const App = () => {
             isOwnedByCurrentUser={blog.user.username === user.username}
           />
         ))}
-        <Togglable buttonLabel="new note" ref={blogFormRef}>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm createBlog={handleCreateNewBlog} />
         </Togglable>
       </div>

@@ -1,6 +1,5 @@
 describe("Blog app", function () {
   beforeEach(function () {
-    //cy.request("POST", "http://localhost:3003/api/testing/reset");
     cy.log(Cypress.env());
     cy.request("POST", `${Cypress.env(`BACKEND`)}/testing/reset`);
     cy.createUser({
@@ -35,6 +34,47 @@ describe("Blog app", function () {
 
       cy.contains("invalid username or password");
       cy.get(".error").should("have.css", "color", "rgb(255, 0, 0)");
+    });
+  });
+
+  describe("when logged in", function () {
+    beforeEach(function () {
+      cy.login({ username: "mluukkai", password: "salainen" });
+    });
+
+    it("A blog can be created", function () {
+      cy.contains("new blog").click();
+      cy.get('input[name="Title"]').type("Test blog title");
+      cy.get('input[name="Author"]').type("Test blogs author");
+      cy.get('input[name="Url"]').type("https://blogs.com/test");
+      cy.contains("add blog").click();
+
+      cy.get(".info");
+
+      cy.contains("Test blog title Test blogs author")
+        .find("button")
+        .should("have.text", "view");
+    });
+
+    describe("when example blog is created", function () {
+      beforeEach(function () {
+        cy.contains("new blog").click();
+        cy.get('input[name="Title"]').type("Test blog title");
+        cy.get('input[name="Author"]').type("Test blogs author");
+        cy.get('input[name="Url"]').type("https://blogs.com/test");
+        cy.contains("add blog").click();
+      });
+
+      it("user can give like to this blog", function () {
+        cy.contains("Test blog title Test blogs author")
+          .find("button")
+          .should("have.text", "view")
+          .click();
+
+        cy.contains("likes 0");
+        cy.contains("like").click();
+        cy.contains("likes 1");
+      });
     });
   });
 });
