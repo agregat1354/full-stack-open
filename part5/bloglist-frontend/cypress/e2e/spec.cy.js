@@ -7,6 +7,11 @@ describe("Blog app", function () {
       name: "Matti Luukkainen",
       password: "salainen",
     });
+    cy.createUser({
+      username: "grzegorzbrz",
+      name: "Grzegorz Brzózka",
+      password: "tajne1354",
+    });
     cy.visit("");
   });
 
@@ -65,7 +70,7 @@ describe("Blog app", function () {
         cy.contains("add blog").click();
       });
 
-      it("user can give like to this blog", function () {
+      it("user who eneterd the blog can give like to it", function () {
         cy.contains("Test blog title Test blogs author")
           .find("button")
           .should("have.text", "view")
@@ -74,6 +79,27 @@ describe("Blog app", function () {
         cy.contains("likes 0");
         cy.contains("like").click();
         cy.contains("likes 1");
+      });
+
+      it("blogs owner can remove blog", function () {
+        cy.contains("Test blog title Test blogs author")
+          .find("button")
+          .should("have.text", "view")
+          .click();
+
+        cy.contains("remove").click();
+
+        cy.contains("Test blog title Test blogs author").should("not.exist");
+      });
+
+      it.only("users can remove only blogs that they entered", function () {
+        cy.login({ username: "grzegorzbrz", password: "tajne1354" });
+        cy.contains("Test blog title Test blogs author")
+          .find("button")
+          .should("have.text", "view")
+          .click();
+
+        cy.contains("remove").should("not.be.visible");
       });
     });
   });

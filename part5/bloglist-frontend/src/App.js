@@ -64,6 +64,7 @@ const App = () => {
   const handleBlogUpdate = async (updatedBlogObject) => {
     try {
       const updatedBlog = await blogService.update(updatedBlogObject);
+      updatedBlog.user = user;
       // live sorting
       /*
       const updatedBlogs = blogs.map((blog) =>

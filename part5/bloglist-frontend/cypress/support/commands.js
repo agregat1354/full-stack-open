@@ -34,6 +34,7 @@ Cypress.Commands.add("createUser", function ({ username, name, password }) {
 });
 
 Cypress.Commands.add("login", function ({ username, password }) {
+  localStorage.clear();
   cy.request("POST", `${Cypress.env("BACKEND")}/login`, {
     username,
     password,
