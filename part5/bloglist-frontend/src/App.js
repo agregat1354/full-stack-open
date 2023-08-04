@@ -66,7 +66,6 @@ const App = () => {
       const updatedBlog = await blogService.update(updatedBlogObject);
       updatedBlog.user = user;
       // live sorting
-      /*
       const updatedBlogs = blogs.map((blog) =>
         blog.id === updatedBlog.id ? updatedBlog : blog
       );
@@ -74,10 +73,12 @@ const App = () => {
         (b1, b2) => b2.likes - b1.likes
       );
       setBlogs(updatedBlogsSorted);
-      */
+      // sorted after page refresh
+      /*
       setBlogs(
         blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
       );
+      */
     } catch (err) {
       console.log(err);
     }

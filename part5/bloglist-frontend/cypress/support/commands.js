@@ -43,3 +43,21 @@ Cypress.Commands.add("login", function ({ username, password }) {
   );
   cy.visit("");
 });
+
+Cypress.Commands.add("createBlog", function ({ title, author, url }) {
+  cy.request({
+    method: "POST",
+    url: `${Cypress.env("BACKEND")}/blogs`,
+    body: {
+      title,
+      author,
+      url,
+    },
+    headers: {
+      Authorization: `Bearer ${
+        JSON.parse(localStorage.getItem("loggedBlogappUser")).token
+      }`,
+    },
+  });
+  cy.visit("");
+});

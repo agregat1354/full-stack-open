@@ -36,7 +36,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div
         className="short-blog-form-container"
         style={hideWhenLongFormVisible}
@@ -51,7 +51,9 @@ const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
         <a href={blog.url}>{blog.url}</a>
         <br />
         likes {blog.likes}
-        <button onClick={handleLike}>like</button>
+        <button onClick={handleLike} className="likeBtn">
+          like
+        </button>
         <br />
         {blog.author}
         <span style={showWhenOwnedByCurrentUser}>

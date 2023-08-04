@@ -92,7 +92,7 @@ describe("Blog app", function () {
         cy.contains("Test blog title Test blogs author").should("not.exist");
       });
 
-      it.only("users can remove only blogs that they entered", function () {
+      it("users can remove only blogs that they entered", function () {
         cy.login({ username: "grzegorzbrz", password: "tajne1354" });
         cy.contains("Test blog title Test blogs author")
           .find("button")
@@ -100,6 +100,57 @@ describe("Blog app", function () {
           .click();
 
         cy.contains("remove").should("not.be.visible");
+      });
+    });
+
+    describe("when multiple blogs are created", function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: "blog1",
+          author: "author",
+          url: "https://blogs/blog1",
+        });
+        cy.createBlog({
+          title: "blog2",
+          author: "author",
+          url: "https://blogs/blog1",
+        });
+        cy.createBlog({
+          title: "blog3",
+          author: "author",
+          url: "https://blogs/blog1",
+        });
+      });
+
+      it.only("blogs are sorted by like count descending", function () {
+        cy.contains("blog1").contains("view").click();
+        cy.contains("blog2").contains("view").click();
+        cy.contains("blog3").contains("view").click();
+
+        cy.contains("blog3")
+          .parent()
+          .contains("like")
+          .click()
+          .parent()
+          .should("contain.text", "likes 1");
+
+        cy.contains("blog3")
+          .parent()
+          .contains("like")
+          .click()
+          .parent()
+          .should("contain.text", "likes 2");
+
+        cy.contains("blog2")
+          .parent()
+          .contains("like")
+          .click()
+          .parent()
+          .should("contain.text", "likes 1");
+
+        cy.get(".blog").eq(0).should("contain.text", "blog3");
+        cy.get(".blog").eq(1).should("contain.text", "blog2");
+        cy.get(".blog").eq(2).should("contain.text", "blog1");
       });
     });
   });
