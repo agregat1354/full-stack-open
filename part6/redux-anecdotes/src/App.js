@@ -1,5 +1,5 @@
-import AnecdoteForm from "./components/AnecdoteForm.js";
 import AnecdoteList from "./components/AnecdoteList.js";
+import AnecdoteForm from "./components/AnecdoteForm.js";
 import Filter from "./components/Filter.js";
 import Notification from "./components/Notification.js";
 

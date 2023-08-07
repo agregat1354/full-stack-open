@@ -3,11 +3,8 @@ import {
   upvoteAnecdote,
   initializeAnecdotes,
 } from "../reducers/anecdoteReducer";
-import {
-  createNotification,
-  removeNotification,
-} from "../reducers/notificationReducer";
 import { useEffect } from "react";
+import { setNotification } from "../reducers/notificationReducer";
 
 const Anecdote = ({ anecdote, handleUpvote }) => {
   return (
@@ -41,8 +38,9 @@ const AnecdoteList = () => {
     const upvotedNotificationContent = anecdotes.find(
       (anecdote) => anecdote.id === id
     ).content;
-    dispatch(createNotification(`you voted '${upvotedNotificationContent}'`));
-    setTimeout(() => dispatch(removeNotification()), 5000);
+    //dispatch(createNotification(`you voted '${upvotedNotificationContent}'`));
+    //setTimeout(() => dispatch(removeNotification()), 5000);
+    dispatch(setNotification(`you voted '${upvotedNotificationContent}'`, 5));
   };
 
   return (
