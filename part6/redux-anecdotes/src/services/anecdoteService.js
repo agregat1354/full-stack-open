@@ -11,4 +11,10 @@ const create = (content) => {
     .then((response) => response.data);
 };
 
-export default { getAll, create };
+const update = (updatedAnecdote) => {
+  return axios
+    .put(`${baseUrl}/${updatedAnecdote.id}`, updatedAnecdote)
+    .then((response) => response.data);
+};
+
+export default { getAll, create, update };
