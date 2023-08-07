@@ -1,5 +1,3 @@
-import { useSelector, useDispatch } from "react-redux";
-import { upvoteAnecdote, newAnecdote } from "./reducers/anecdoteReducer.js";
 import AnecdoteForm from "./components/AnecdoteForm.js";
 import AnecdoteList from "./components/AnecdoteList.js";
 import Filter from "./components/Filter.js";
