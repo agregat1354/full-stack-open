@@ -1,11 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
-import { upvoteAnecdote, setAnecdotes } from "../reducers/anecdoteReducer";
+import {
+  upvoteAnecdote,
+  initializeAnecdotes,
+} from "../reducers/anecdoteReducer";
 import {
   createNotification,
   removeNotification,
 } from "../reducers/notificationReducer";
 import { useEffect } from "react";
-import anecdoteService from "../services/anecdoteService";
 
 const Anecdote = ({ anecdote, handleUpvote }) => {
   return (
@@ -21,9 +23,7 @@ const AnecdoteList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    anecdoteService
-      .getAll()
-      .then((anecdotes) => dispatch(setAnecdotes(anecdotes)));
+    dispatch(initializeAnecdotes());
   }, [dispatch]);
 
   const anecdotes = useSelector(({ anecdotes, filter }) => {
