@@ -12,9 +12,15 @@ const Anecdote = ({ anecdote, handleUpvote }) => {
 };
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) =>
-    state.toSorted((a, b) => b.votes - a.votes)
-  );
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    const sortedAnecdotes = anecdotes.toSorted((a, b) => b.votes - a.votes);
+    const filterRegex = new RegExp(`${filter}`);
+    return filter
+      ? sortedAnecdotes.filter((anecdote) =>
+          anecdote.content.match(filterRegex)
+        )
+      : sortedAnecdotes;
+  });
   const dispatch = useDispatch();
 
   const handleUpvote = (id) => {
