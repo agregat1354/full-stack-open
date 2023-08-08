@@ -10,6 +10,16 @@ const AnecdoteForm = () => {
       const anecdotes = queryClient.getQueryData("anecdotes");
       queryClient.setQueryData("anecdotes", [...anecdotes, newAnecdote]);
     },
+    onError(err) {
+      dispatchNotification({
+        type: "CREATE_NOTIFICATION",
+        payload: `${err.response.data.error}`,
+      });
+      setTimeout(
+        () => dispatchNotification({ type: "REMOVE_NOTIFICATION" }),
+        5000
+      );
+    },
   });
 
   const onCreate = (event) => {
