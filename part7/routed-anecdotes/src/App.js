@@ -96,7 +96,7 @@ const CreateNew = (props) => {
       info: info.value,
       votes: 0,
     });
-    props.createNotification(`a new anecdote ${content} created!`, 5);
+    props.createNotification(`a new anecdote ${content.value} created!`, 5);
     navigate("/");
   };
 
