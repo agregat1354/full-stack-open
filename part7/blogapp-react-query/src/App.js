@@ -6,21 +6,16 @@ import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+import { useNotificationDispatch } from "./NotificationContext.js";
 
 const App = () => {
+  const dispatchNotification = useNotificationDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [notificationClassType, setNotificationClassType] = useState("info");
   const blogFormRef = useRef();
-
-  const showNotification = (messageText, messageType, durationInSeconds) => {
-    setNotificationClassType(messageType);
-    setNotificationMessage(messageText);
-    setTimeout(() => setNotificationMessage(null), durationInSeconds * 1000);
-  };
 
   useEffect(() => {
     const userJson = window.localStorage.getItem("loggedBlogappUser");
@@ -40,6 +35,17 @@ const App = () => {
       .catch((err) => console.log(err));
   }, [user]);
 
+  const showNotification = (text, type, durationInSeconds) => {
+    dispatchNotification({
+      type: "SET_NOTIFICATION",
+      payload: { notification: text, type },
+    });
+    setTimeout(
+      () => dispatchNotification({ type: "REMOVE_NOTIFICATION" }),
+      durationInSeconds * 1000
+    );
+  };
+
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
@@ -57,6 +63,7 @@ const App = () => {
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       showNotification("Succesfully logged in", "info", 5);
     } catch (err) {
+      console.log(err);
       showNotification(err.response.data.error, "error", 5);
     }
   };
@@ -65,7 +72,6 @@ const App = () => {
     try {
       const updatedBlog = await blogService.update(updatedBlogObject);
       updatedBlog.user = user;
-      // live sorting
       const updatedBlogs = blogs.map((blog) =>
         blog.id === updatedBlog.id ? updatedBlog : blog
       );
@@ -73,12 +79,6 @@ const App = () => {
         (b1, b2) => b2.likes - b1.likes
       );
       setBlogs(updatedBlogsSorted);
-      // sorted after page refresh
-      /*
-      setBlogs(
-        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-      );
-      */
     } catch (err) {
       console.log(err);
     }
@@ -119,10 +119,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        <Notification
-          text={notificationMessage}
-          typeClass={notificationClassType}
-        />
+        <Notification />
         {user.username} is logged in
         <button onClick={logout}>logout</button>
         <h2>list of blogs</h2>
@@ -146,10 +143,7 @@ const App = () => {
     return (
       <>
         <h2>Log in to application</h2>
-        <Notification
-          text={notificationMessage}
-          typeClass={notificationClassType}
-        />
+        <Notification />
         <form onSubmit={handleLogin}>
           username
           <input
