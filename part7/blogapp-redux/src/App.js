@@ -46,71 +46,16 @@ const App = () => {
 
   const handleBlogUpdate = async (updatedBlogObject) => {
     dispatch(updateBlog(updatedBlogObject));
-    /*
-    try {
-      const updatedBlog = await blogService.update(updatedBlogObject);
-      updatedBlog.user = user;
-      const updatedBlogs = blogs.map((blog) =>
-        blog.id === updatedBlog.id ? updatedBlog : blog
-      );
-      const updatedBlogsSorted = updatedBlogs.toSorted(
-        (b1, b2) => b2.likes - b1.likes
-      );
-      dispatch(setBlogs(updatedBlogsSorted));
-    } catch (err) {
-      console.log(err);
-    }
-    */
   };
 
   const handleBlogDelete = async (blogToDelete) => {
     dispatch(deleteBlog(blogToDelete));
-    /*
-    try {
-      if (
-        window.confirm(
-          `Remove blog ${blogToDelete.title} by ${blogToDelete.author}`
-        )
-      ) {
-        await blogService.deleteBlog(blogToDelete.id);
-        dispatch(setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id)));
-      }
-    } catch (err) {
-      dispatch(showNotification(err.response.data.error, "error", 5));
-    }
-    */
   };
 
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
     dispatch(createBlog(blogObject));
   };
-
-  /*
-  const mainContent = () => {
-    return (
-      <div>
-        <h2>blogs</h2>
-        <Notification />
-        {user.username} is logged in
-        <button onClick={logout}>logout</button>
-        <h2>list of blogs</h2>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateBlog={handleBlogUpdate}
-            deleteBlog={handleBlogDelete}
-            isOwnedByCurrentUser={blog.user.username === user.username}
-          />
-        ))}
-        <Togglable buttonLabel="new blog" ref={blogFormRef}>
-          <BlogForm createBlog={handleCreateNewBlog} />
-        </Togglable>
-      </div>
-    );
-  };
-  */
 
   const mainContent = () => {
     return (
