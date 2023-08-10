@@ -2,36 +2,22 @@ import "./index.css";
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
-//import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, setBlogs } from "./reducers/blogReducer";
+import { initializeBlogs, setBlogs, createBlog } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
 
   const blogs = useSelector((state) => state.blogs);
-  //const [user, setUser] = useState(null);
   const user = useSelector((state) => state.user);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const blogFormRef = useRef();
-
-  /*
-  useEffect(() => {
-    const userJson = window.localStorage.getItem("loggedBlogappUser");
-    console.log("in useEffect userJSON: ", userJson);
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-  */
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -87,6 +73,8 @@ const App = () => {
 
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
+    dispatch(createBlog(blogObject));
+    /*
     try {
       const responseBlog = await blogService.create(blogObject);
       responseBlog.user = user;
@@ -101,7 +89,34 @@ const App = () => {
     } catch (err) {
       dispatch(showNotification(err.response.data.error, "error", 5));
     }
+    */
   };
+
+  /*
+  const mainContent = () => {
+    return (
+      <div>
+        <h2>blogs</h2>
+        <Notification />
+        {user.username} is logged in
+        <button onClick={logout}>logout</button>
+        <h2>list of blogs</h2>
+        {blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={handleBlogUpdate}
+            deleteBlog={handleBlogDelete}
+            isOwnedByCurrentUser={blog.user.username === user.username}
+          />
+        ))}
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+          <BlogForm createBlog={handleCreateNewBlog} />
+        </Togglable>
+      </div>
+    );
+  };
+  */
 
   const mainContent = () => {
     return (
