@@ -9,6 +9,7 @@ import BlogForm from "./components/BlogForm";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
 import { initializeBlogs, setBlogs } from "./reducers/blogReducer";
+import { login } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const App = () => {
 
   useEffect(() => {
     const userJson = window.localStorage.getItem("loggedBlogappUser");
+    console.log("in useEffect userJSON: ", userJson);
     if (userJson) {
       const user = JSON.parse(userJson);
       setUser(user);
@@ -43,10 +45,11 @@ const App = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      dispatch(login({ username, password }));
       const user = await loginService.login({ username, password });
       setUser(user);
       blogService.setToken(user.token);
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      //window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       dispatch(showNotification("Succesfully logged in", "info", 5));
     } catch (err) {
       dispatch(showNotification(err.response.data.error, "error", 5));
