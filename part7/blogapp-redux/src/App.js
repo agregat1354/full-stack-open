@@ -7,7 +7,12 @@ import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
-import { initializeBlogs, setBlogs, createBlog } from "./reducers/blogReducer";
+import {
+  initializeBlogs,
+  setBlogs,
+  createBlog,
+  deleteBlog,
+} from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
 
 const App = () => {
@@ -57,6 +62,8 @@ const App = () => {
   };
 
   const handleBlogDelete = async (blogToDelete) => {
+    dispatch(deleteBlog(blogToDelete));
+    /*
     try {
       if (
         window.confirm(
@@ -69,27 +76,12 @@ const App = () => {
     } catch (err) {
       dispatch(showNotification(err.response.data.error, "error", 5));
     }
+    */
   };
 
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
     dispatch(createBlog(blogObject));
-    /*
-    try {
-      const responseBlog = await blogService.create(blogObject);
-      responseBlog.user = user;
-      dispatch(setBlogs([...blogs, responseBlog]));
-      dispatch(
-        showNotification(
-          `a new blog ${responseBlog.title} by ${responseBlog.author} has been added`,
-          "info",
-          5
-        )
-      );
-    } catch (err) {
-      dispatch(showNotification(err.response.data.error, "error", 5));
-    }
-    */
   };
 
   /*

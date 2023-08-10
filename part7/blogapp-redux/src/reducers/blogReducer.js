@@ -49,15 +49,19 @@ export const createBlog = (newBlogData) => {
   };
 };
 
-export const deleteBlog = (id) => {
-  return async (dispatch, getState) => {
+export const deleteBlog = (blogToDelete) => {
+  return async (dispatch) => {
     try {
-      const blogToDelete = getState().blogs.find((blog) => blog.id === id);
-      console.log(blogToDelete);
-      //await blogService.deleteBlog(id);
-      //dispatch(blogSlice.actions.deleteBlog(id));
+      await blogService.deleteBlog(blogToDelete.id);
+      dispatch(blogSlice.actions.deleteBlog(blogToDelete.id));
     } catch (err) {
-      console.log(`could not delete blog with id ${id}`, err.message);
+      dispatch(
+        showNotification(
+          `could not delete blog with id ${blogToDelete.id}`,
+          "error",
+          5
+        )
+      );
     }
   };
 };
