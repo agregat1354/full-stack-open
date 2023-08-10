@@ -1,7 +1,6 @@
 import "./index.css";
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
@@ -9,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
 import {
   initializeBlogs,
-  setBlogs,
   createBlog,
   deleteBlog,
+  updateBlog,
 } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
 
@@ -46,6 +45,8 @@ const App = () => {
   };
 
   const handleBlogUpdate = async (updatedBlogObject) => {
+    dispatch(updateBlog(updatedBlogObject));
+    /*
     try {
       const updatedBlog = await blogService.update(updatedBlogObject);
       updatedBlog.user = user;
@@ -59,6 +60,7 @@ const App = () => {
     } catch (err) {
       console.log(err);
     }
+    */
   };
 
   const handleBlogDelete = async (blogToDelete) => {

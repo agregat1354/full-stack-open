@@ -10,5 +10,3 @@ export const store = configureStore({
     user: userReducer,
   },
 });
-
-console.log("stors initial state: ", store.getState());

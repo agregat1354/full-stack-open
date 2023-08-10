@@ -7,7 +7,7 @@ const blogSlice = createSlice({
   initialState: [],
   reducers: {
     setBlogs: (state, { payload: blogs }) => {
-      return blogs;
+      return blogs.toSorted((b1, b2) => b2.likes - b1.likes);
     },
     appendBlog: (state, { payload: newBlog }) => {
       state.push(newBlog);
@@ -16,9 +16,10 @@ const blogSlice = createSlice({
       return state.filter((blog) => blog.id !== id);
     },
     updateBlog: (state, { payload: updatedBlog }) => {
-      return state.map((blog) =>
+      const blogs = state.map((blog) =>
         blog.id === updatedBlog.id ? updatedBlog : blog
       );
+      return blogs.toSorted((b1, b2) => b2.likes - b1.likes);
     },
   },
 });
@@ -27,8 +28,7 @@ export const { setBlogs } = blogSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
-    const blogs = await blogService.getAll();
-    console.log("blogs returned", blogs);
+    let blogs = await blogService.getAll();
     dispatch(setBlogs(blogs));
   };
 };
@@ -81,7 +81,7 @@ export const deleteBlog = (blogToDelete) => {
 export const updateBlog = (updatedBlog) => {
   return async (dispatch) => {
     try {
-      const updatedBlogResponse = await blogService.updateBlog(updatedBlog);
+      const updatedBlogResponse = await blogService.update(updatedBlog);
       dispatch(blogSlice.actions.updateBlog(updatedBlogResponse));
     } catch (error) {
       console.log("error in updateBlog, error message: ", error.message);
