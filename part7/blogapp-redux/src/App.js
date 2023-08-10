@@ -61,12 +61,7 @@ const App = () => {
         <button onClick={logout}>logout</button>
         <h2>list of blogs</h2>
         {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateBlog={handleBlogUpdate}
-            isOwnedByCurrentUser={blog.user.username === user.username}
-          />
+          <Blog key={blog.id} blog={blog} updateBlog={handleBlogUpdate} />
         ))}
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm createBlog={handleCreateNewBlog} />

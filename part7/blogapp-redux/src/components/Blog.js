@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, updateBlog, isOwnedByCurrentUser }) => {
+const Blog = ({ blog, updateBlog }) => {
   const [longFormVisible, setLongFormVisible] = useState(false);
+
   const dispatch = useDispatch();
+  const username = useSelector((state) => state.user.username);
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -33,8 +35,14 @@ const Blog = ({ blog, updateBlog, isOwnedByCurrentUser }) => {
   const hideWhenLongFormVisible = { display: longFormVisible ? "none" : "" };
   const showWhenLongFormVisible = { display: longFormVisible ? "" : "none" };
 
+  /*
   const showWhenOwnedByCurrentUser = {
     display: isOwnedByCurrentUser ? "" : "none",
+  };
+  */
+
+  const showWhenOwnedByCurrentUser = {
+    display: blog.user.username === username ? "" : "none",
   };
 
   return (
