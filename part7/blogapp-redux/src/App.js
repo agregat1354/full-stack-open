@@ -6,21 +6,17 @@ import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+import { useDispatch } from "react-redux";
+import { showNotification } from "./reducers/notificationReducer";
 
 const App = () => {
+  const dispatch = useDispatch();
+
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [notificationClassType, setNotificationClassType] = useState("info");
   const blogFormRef = useRef();
-
-  const showNotification = (messageText, messageType, durationInSeconds) => {
-    setNotificationClassType(messageType);
-    setNotificationMessage(messageText);
-    setTimeout(() => setNotificationMessage(null), durationInSeconds * 1000);
-  };
 
   useEffect(() => {
     const userJson = window.localStorage.getItem("loggedBlogappUser");
@@ -45,7 +41,7 @@ const App = () => {
     setUser(null);
     setUsername("");
     setPassword("");
-    showNotification("logged out", "info", 5);
+    dispatch(showNotification("logged out", "info", 5));
   };
 
   const handleLogin = async (e) => {
@@ -55,9 +51,9 @@ const App = () => {
       setUser(user);
       blogService.setToken(user.token);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      showNotification("Succesfully logged in", "info", 5);
+      dispatch(showNotification("Succesfully logged in", "info", 5));
     } catch (err) {
-      showNotification(err.response.data.error, "error", 5);
+      dispatch(showNotification(err.response.data.error, "error", 5));
     }
   };
 
@@ -65,7 +61,6 @@ const App = () => {
     try {
       const updatedBlog = await blogService.update(updatedBlogObject);
       updatedBlog.user = user;
-      // live sorting
       const updatedBlogs = blogs.map((blog) =>
         blog.id === updatedBlog.id ? updatedBlog : blog
       );
@@ -73,12 +68,6 @@ const App = () => {
         (b1, b2) => b2.likes - b1.likes
       );
       setBlogs(updatedBlogsSorted);
-      // sorted after page refresh
-      /*
-      setBlogs(
-        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
-      );
-      */
     } catch (err) {
       console.log(err);
     }
@@ -95,7 +84,7 @@ const App = () => {
         setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
       }
     } catch (err) {
-      showNotification(err.response.data.error, "error", 5);
+      dispatch(showNotification(err.response.data.error, "error", 5));
     }
   };
 
@@ -105,13 +94,15 @@ const App = () => {
       const responseBlog = await blogService.create(blogObject);
       responseBlog.user = user;
       setBlogs([...blogs, responseBlog]);
-      showNotification(
-        `a new blog ${responseBlog.title} by ${responseBlog.author} has been added`,
-        "info",
-        5
+      dispatch(
+        showNotification(
+          `a new blog ${responseBlog.title} by ${responseBlog.author} has been added`,
+          "info",
+          5
+        )
       );
     } catch (err) {
-      showNotification(err.response.data.error, "error", 5);
+      dispatch(showNotification(err.response.data.error, "error", 5));
     }
   };
 
@@ -119,10 +110,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        <Notification
-          text={notificationMessage}
-          typeClass={notificationClassType}
-        />
+        <Notification />
         {user.username} is logged in
         <button onClick={logout}>logout</button>
         <h2>list of blogs</h2>
@@ -146,10 +134,7 @@ const App = () => {
     return (
       <>
         <h2>Log in to application</h2>
-        <Notification
-          text={notificationMessage}
-          typeClass={notificationClassType}
-        />
+        <Notification />
         <form onSubmit={handleLogin}>
           username
           <input
