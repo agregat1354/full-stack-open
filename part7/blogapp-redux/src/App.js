@@ -9,7 +9,6 @@ import { showNotification } from "./reducers/notificationReducer";
 import {
   initializeBlogs,
   createBlog,
-  deleteBlog,
   updateBlog,
 } from "./reducers/blogReducer";
 import { loginUser, logoutUser } from "./reducers/userReducer";
@@ -48,10 +47,6 @@ const App = () => {
     dispatch(updateBlog(updatedBlogObject));
   };
 
-  const handleBlogDelete = async (blogToDelete) => {
-    dispatch(deleteBlog(blogToDelete));
-  };
-
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
     dispatch(createBlog(blogObject));
@@ -70,7 +65,6 @@ const App = () => {
             key={blog.id}
             blog={blog}
             updateBlog={handleBlogUpdate}
-            deleteBlog={handleBlogDelete}
             isOwnedByCurrentUser={blog.user.username === user.username}
           />
         ))}

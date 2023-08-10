@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
+const Blog = ({ blog, updateBlog, isOwnedByCurrentUser }) => {
   const [longFormVisible, setLongFormVisible] = useState(false);
-
+  const dispatch = useDispatch();
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -25,7 +27,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
   };
 
   const handleDelete = () => {
-    deleteBlog(blog);
+    dispatch(deleteBlog(blog));
   };
 
   const hideWhenLongFormVisible = { display: longFormVisible ? "none" : "" };
