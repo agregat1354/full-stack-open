@@ -4,10 +4,12 @@ import blogService from "../services/blogs.js";
 
 const retrieveUserFromLocalStorage = () => {
   const userFromLocalStorage = window.localStorage.getItem("loggedBlogappUser");
-  console.log("initializing user state with: ", userFromLocalStorage);
-  return userFromLocalStorage
-    ? JSON.parse(userFromLocalStorage)
-    : { username: null, name: null, token: null };
+
+  if (!userFromLocalStorage) return { username: null, name: null, token: null };
+
+  const user = JSON.parse(userFromLocalStorage);
+  blogService.setToken(user.token);
+  return user;
 };
 
 const userSlice = createSlice({
