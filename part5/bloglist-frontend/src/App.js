@@ -38,7 +38,7 @@ const App = () => {
         setBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes))
       )
       .catch((err) => console.log(err));
-  }, []);
+  }, [user]);
 
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
