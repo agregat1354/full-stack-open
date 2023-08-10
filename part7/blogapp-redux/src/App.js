@@ -6,13 +6,14 @@ import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
+import { initializeBlogs, setBlogs } from "./reducers/blogReducer";
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,12 +29,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) =>
-        setBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes))
-      )
-      .catch((err) => console.log(err));
+    dispatch(initializeBlogs());
   }, [user]);
 
   const logout = () => {
@@ -67,7 +63,7 @@ const App = () => {
       const updatedBlogsSorted = updatedBlogs.toSorted(
         (b1, b2) => b2.likes - b1.likes
       );
-      setBlogs(updatedBlogsSorted);
+      dispatch(setBlogs(updatedBlogsSorted));
     } catch (err) {
       console.log(err);
     }
@@ -81,7 +77,7 @@ const App = () => {
         )
       ) {
         await blogService.deleteBlog(blogToDelete.id);
-        setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
+        dispatch(setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id)));
       }
     } catch (err) {
       dispatch(showNotification(err.response.data.error, "error", 5));
@@ -93,7 +89,7 @@ const App = () => {
     try {
       const responseBlog = await blogService.create(blogObject);
       responseBlog.user = user;
-      setBlogs([...blogs, responseBlog]);
+      dispatch(setBlogs([...blogs, responseBlog]));
       dispatch(
         showNotification(
           `a new blog ${responseBlog.title} by ${responseBlog.author} has been added`,
