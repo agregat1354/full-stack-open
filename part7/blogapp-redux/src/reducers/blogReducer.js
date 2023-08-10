@@ -6,14 +6,19 @@ const blogSlice = createSlice({
   name: "blogs",
   initialState: [],
   reducers: {
-    setBlogs: (state, { payload }) => {
-      return payload;
+    setBlogs: (state, { payload: blogs }) => {
+      return blogs;
     },
-    appendBlog: (state, { payload }) => {
-      state.push(payload);
+    appendBlog: (state, { payload: newBlog }) => {
+      state.push(newBlog);
     },
-    deleteBlog: (state, { payload }) => {
-      return state.filter((blog) => blog.id !== payload);
+    deleteBlog: (state, { payload: id }) => {
+      return state.filter((blog) => blog.id !== id);
+    },
+    updateBlog: (state, { payload: updatedBlog }) => {
+      return state.map((blog) =>
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      );
     },
   },
 });
@@ -52,6 +57,13 @@ export const createBlog = (newBlogData) => {
 export const deleteBlog = (blogToDelete) => {
   return async (dispatch) => {
     try {
+      if (
+        !window.confirm(
+          `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
+        )
+      )
+        return;
+
       await blogService.deleteBlog(blogToDelete.id);
       dispatch(blogSlice.actions.deleteBlog(blogToDelete.id));
     } catch (err) {
@@ -62,6 +74,17 @@ export const deleteBlog = (blogToDelete) => {
           5
         )
       );
+    }
+  };
+};
+
+export const updateBlog = (updatedBlog) => {
+  return async (dispatch) => {
+    try {
+      const updatedBlogResponse = await blogService.updateBlog(updatedBlog);
+      dispatch(blogSlice.actions.updateBlog(updatedBlogResponse));
+    } catch (error) {
+      console.log("error in updateBlog, error message: ", error.message);
     }
   };
 };
