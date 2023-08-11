@@ -7,6 +7,7 @@ import LoginForm from "./components/LoginForm";
 import Users from "./components/Users";
 import Blogs from "./components/Blogs";
 import User from "./components/User";
+import Blog from "./components/Blog";
 import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
@@ -29,6 +30,7 @@ const App = () => {
       <Route path="/users" element={<Users />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/users/:id" element={<User />} />
+      <Route path="/blogs/:id" element={<Blog />} />
     </Routes>
   );
 };
