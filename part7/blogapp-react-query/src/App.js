@@ -8,10 +8,13 @@ import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useNotificationDispatch } from "./NotificationContext.js";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useUserValue, useUserDispatch } from "./UserContext.js";
 
 const App = () => {
+  const user = useUserValue();
+  const userDispatch = useUserDispatch();
+
   const [sortedBlogs, setSortedBlogs] = useState(null);
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const blogFormRef = useRef();
@@ -72,22 +75,13 @@ const App = () => {
   });
 
   useEffect(() => {
-    const userJson = window.localStorage.getItem("loggedBlogappUser");
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-
-  useEffect(() => {
     if (!blogs) return;
     setSortedBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes));
   }, [blogs]);
 
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
+    userDispatch({ type: "LOG_OUT" });
     setUsername("");
     setPassword("");
     showNotification("logged out", "info", 5);
@@ -97,7 +91,7 @@ const App = () => {
     e.preventDefault();
     try {
       const user = await loginService.login({ username, password });
-      setUser(user);
+      userDispatch({ type: "LOG_IN", payload: user });
       blogService.setToken(user.token);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       showNotification("Succesfully logged in", "info", 5);
