@@ -7,39 +7,16 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useNotificationDispatch } from "./NotificationContext.js";
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const App = () => {
-  console.log("how many times is this shit run");
-  const dispatchNotification = useNotificationDispatch();
-  const {
-    isLoading,
-    isError,
-    data: blogs,
-    error,
-  } = useQuery("blogsButQuery", blogService.getAll);
-
   const [sortedBlogs, setSortedBlogs] = useState(null);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const blogFormRef = useRef();
 
-  useEffect(() => {
-    const userJson = window.localStorage.getItem("loggedBlogappUser");
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("this is run");
-    console.log("blogs are: ", blogs);
-    if (!blogs) return;
-    setSortedBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes));
-  }, [blogs]);
+  const dispatchNotification = useNotificationDispatch();
 
   const showNotification = (text, type, durationInSeconds) => {
     dispatchNotification({
@@ -51,6 +28,44 @@ const App = () => {
       durationInSeconds * 1000
     );
   };
+
+  const queryClient = useQueryClient();
+  const {
+    isLoading,
+    isError,
+    data: blogs,
+    error,
+  } = useQuery("blogs", blogService.getAll);
+
+  const createBlog = useMutation(blogService.create, {
+    onSuccess: (newBlog) => {
+      newBlog.user = user;
+      queryClient.setQueryData("blogs", [...blogs, newBlog]);
+      showNotification(
+        `a new blog ${newBlog.title} by ${newBlog.author} has been added`,
+        "info",
+        5
+      );
+    },
+    onError: (error) => {
+      showNotification(error.response.data.error, "error", 5);
+    },
+  });
+
+  useEffect(() => {
+    const userJson = window.localStorage.getItem("loggedBlogappUser");
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("blogs are: ", blogs);
+    if (!blogs) return;
+    setSortedBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes));
+  }, [blogs]);
 
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
@@ -107,18 +122,7 @@ const App = () => {
 
   const handleCreateNewBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
-    try {
-      const responseBlog = await blogService.create(blogObject);
-      responseBlog.user = user;
-      setBlogs([...blogs, responseBlog]);
-      showNotification(
-        `a new blog ${responseBlog.title} by ${responseBlog.author} has been added`,
-        "info",
-        5
-      );
-    } catch (err) {
-      showNotification(err.response.data.error, "error", 5);
-    }
+    createBlog.mutate(blogObject);
   };
 
   const mainContent = () => {
