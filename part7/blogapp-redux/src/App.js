@@ -1,19 +1,25 @@
 import "./index.css";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import Users from "./components/Users";
 import Blogs from "./components/Blogs";
+import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user.token) return;
     navigate("/login");
+  }, [user]);
+
+  useEffect(() => {
+    dispatch(initializeBlogs());
   }, [user]);
 
   return (

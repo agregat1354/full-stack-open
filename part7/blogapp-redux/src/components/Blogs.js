@@ -1,21 +1,17 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import Navigation from "./Navigation";
 import Notification from "./Notification";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  updateBlog,
-  createBlog,
-  initializeBlogs,
-} from "../reducers/blogReducer";
+import { updateBlog, createBlog } from "../reducers/blogReducer";
 import Blog from "./Blog";
 import Togglable from "./Togglable";
 import BlogForm from "./BlogForm";
 
 const Blogs = () => {
+  console.log("blogs rendered");
   const dispatch = useDispatch();
   const blogFormRef = useRef();
   const blogs = useSelector((state) => state.blogs);
-  const user = useSelector((state) => state.user);
 
   const handleBlogUpdate = async (updatedBlogObject) => {
     dispatch(updateBlog(updatedBlogObject));
@@ -25,10 +21,6 @@ const Blogs = () => {
     blogFormRef.current.toggleVisibility();
     dispatch(createBlog(blogObject));
   };
-
-  useEffect(() => {
-    dispatch(initializeBlogs());
-  }, [user]);
 
   return (
     <div>
