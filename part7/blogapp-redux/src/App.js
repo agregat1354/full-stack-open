@@ -12,8 +12,9 @@ const App = () => {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (!user.token) navigate("/login");
-  }, []);
+    if (user.token) return;
+    navigate("/login");
+  }, [user]);
 
   return (
     <Routes>

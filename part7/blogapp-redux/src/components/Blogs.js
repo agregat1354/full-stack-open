@@ -17,6 +17,7 @@ const Blogs = () => {
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
 
+  console.log("this gets rendered");
   const handleBlogUpdate = async (updatedBlogObject) => {
     dispatch(updateBlog(updatedBlogObject));
   };
