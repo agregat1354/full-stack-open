@@ -1,6 +1,6 @@
 # getAllBlogs
 GET http://localhost:3003/api/blogs
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0ZTY5ZjkxODBhYTVmMjgwYmI3NDgiLCJpYXQiOjE2OTEwNTU5NDZ9.HxHJlE_9iD7ullhslP87PJel6S-j4_p84fUrxaYSW7A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MWFhZGM1MTgxYTc5OTM5MmNjNmQiLCJpYXQiOjE2OTE3ODQwMjd9.ExGoJyblTpMmdJMSq5KDv_JrdyrYD7IRl80HMIW-pBs
 
 ###
 
@@ -107,3 +107,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imdye
 
 # clear testing database
 POST http://localhost:3003/api/testing/reset
+
+
+###
+
+POST http://localhost:3003/api/blogs/64d69141bdc04a73333180e8/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGM0MWFhZGM1MTgxYTc5OTM5MmNjNmQiLCJpYXQiOjE2OTE3ODQwMjd9.ExGoJyblTpMmdJMSq5KDv_JrdyrYD7IRl80HMIW-pBs
+
+{
+    "comment": "this is some new new comment"
+}
