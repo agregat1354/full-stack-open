@@ -52,6 +52,25 @@ const App = () => {
     },
   });
 
+  const updateBlog = useMutation(blogService.update, {
+    onSuccess: (updatedBlog) => {
+      updatedBlog.user = user;
+      queryClient.setQueryData(
+        "blogs",
+        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+      );
+    },
+    onError: (error) => {
+      console.log("error while updating: ", error);
+    },
+  });
+
+  const deleteBlog = useMutation(blogService.deleteBlog, {
+    onError: (error) => {
+      throw new Error(error);
+    },
+  });
+
   useEffect(() => {
     const userJson = window.localStorage.getItem("loggedBlogappUser");
     if (userJson) {
@@ -62,7 +81,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    console.log("blogs are: ", blogs);
     if (!blogs) return;
     setSortedBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes));
   }, [blogs]);
@@ -90,33 +108,25 @@ const App = () => {
   };
 
   const handleBlogUpdate = async (updatedBlogObject) => {
-    try {
-      const updatedBlog = await blogService.update(updatedBlogObject);
-      updatedBlog.user = user;
-      const updatedBlogs = blogs.map((blog) =>
-        blog.id === updatedBlog.id ? updatedBlog : blog
-      );
-      const updatedBlogsSorted = updatedBlogs.toSorted(
-        (b1, b2) => b2.likes - b1.likes
-      );
-      setBlogs(updatedBlogsSorted);
-    } catch (err) {
-      console.log(err);
-    }
+    updateBlog.mutate(updatedBlogObject);
   };
 
   const handleBlogDelete = async (blogToDelete) => {
+    if (
+      !window.confirm(
+        `Remove blog ${blogToDelete.title} by ${blogToDelete.author}`
+      )
+    )
+      return;
+
     try {
-      if (
-        window.confirm(
-          `Remove blog ${blogToDelete.title} by ${blogToDelete.author}`
-        )
-      ) {
-        await blogService.deleteBlog(blogToDelete.id);
-        setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
-      }
-    } catch (err) {
-      showNotification(err.response.data.error, "error", 5);
+      deleteBlog.mutate(blogToDelete.id);
+      queryClient.setQueryData(
+        "blogs",
+        blogs.filter((blog) => blog.id !== blogToDelete.id)
+      );
+    } catch (error) {
+      console.log("error while deleting blog");
     }
   };
 
