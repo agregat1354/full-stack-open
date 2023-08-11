@@ -1,17 +1,20 @@
 import Navigation from "./Navigation";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import userService from "../services/users";
 
-const UserRow = ({ name, blogCount }) => {
+const UserRow = ({ user }) => {
   return (
     <tr>
-      <td>{name}</td>
-      <td>{blogCount}</td>
+      <td>
+        <Link to={`/users/${user.id}`}>{user.name}</Link>
+      </td>
+      <td>{user.blogs.length}</td>
     </tr>
   );
 };
 
-const StatTable = ({ stats }) => {
+const StatTable = ({ users }) => {
   return (
     <table>
       <thead>
@@ -21,12 +24,8 @@ const StatTable = ({ stats }) => {
         </tr>
       </thead>
       <tbody>
-        {stats.map((userStatsArray) => (
-          <UserRow
-            key={userStatsArray[0]}
-            name={userStatsArray[0]}
-            blogCount={userStatsArray[1]}
-          />
+        {users.map((user) => (
+          <UserRow key={user.id} user={user} />
         ))}
       </tbody>
     </table>
@@ -34,28 +33,19 @@ const StatTable = ({ stats }) => {
 };
 
 const Users = () => {
-  const blogs = useSelector((state) => state.blogs);
-  const [stats, setStats] = useState(null);
+  const [users, setUsers] = useState(null);
+
   useEffect(() => {
-    console.log(blogs);
-    const summaryObject = blogs.reduce((summary, currentBlog) => {
-      if (Object.prototype.hasOwnProperty.call(summary, currentBlog.user.name))
-        summary[currentBlog.user.name]++;
-      else summary[currentBlog.user.name] = 1;
-      return summary;
-    }, {});
-    const statsArray = Object.keys(summaryObject).map((key) => [
-      key,
-      summaryObject[key],
-    ]);
-    setStats(statsArray);
-  }, [blogs]);
+    userService.getAll().then((users) => setUsers(users));
+  }, []);
+
+  if (!users) return null;
 
   return (
     <div>
       <Navigation />
       <h2>Users</h2>
-      {stats && <StatTable stats={stats} />}
+      <StatTable users={users} />
     </div>
   );
 };

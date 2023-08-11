@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import Users from "./components/Users";
 import Blogs from "./components/Blogs";
+import User from "./components/User";
 import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
@@ -24,9 +25,10 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Blogs />}></Route>
-      <Route path="/users" element={<Users />}></Route>
-      <Route path="/login" element={<LoginForm />}></Route>
+      <Route path="/" element={<Blogs />} />
+      <Route path="/users" element={<Users />} />
+      <Route path="/login" element={<LoginForm />} />
+      <Route path="/users/:id" element={<User />} />
     </Routes>
   );
 };

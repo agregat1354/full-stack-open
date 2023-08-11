@@ -8,7 +8,6 @@ import Togglable from "./Togglable";
 import BlogForm from "./BlogForm";
 
 const Blogs = () => {
-  console.log("blogs rendered");
   const dispatch = useDispatch();
   const blogFormRef = useRef();
   const blogs = useSelector((state) => state.blogs);
