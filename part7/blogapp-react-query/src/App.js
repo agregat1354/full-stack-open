@@ -7,11 +7,19 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
 import { useNotificationDispatch } from "./NotificationContext.js";
+import { useQuery } from "react-query";
 
 const App = () => {
+  console.log("how many times is this shit run");
   const dispatchNotification = useNotificationDispatch();
+  const {
+    isLoading,
+    isError,
+    data: blogs,
+    error,
+  } = useQuery("blogsButQuery", blogService.getAll);
 
-  const [blogs, setBlogs] = useState([]);
+  const [sortedBlogs, setSortedBlogs] = useState(null);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -27,13 +35,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) =>
-        setBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes))
-      )
-      .catch((err) => console.log(err));
-  }, [user]);
+    console.log("this is run");
+    console.log("blogs are: ", blogs);
+    if (!blogs) return;
+    setSortedBlogs(blogs.toSorted((b1, b2) => b2.likes - b1.likes));
+  }, [blogs]);
 
   const showNotification = (text, type, durationInSeconds) => {
     dispatchNotification({
@@ -116,6 +122,9 @@ const App = () => {
   };
 
   const mainContent = () => {
+    if (isLoading) return <div>...loading</div>;
+    if (isError) return <div>error: {error.message}</div>;
+    if (!sortedBlogs) return <div>preparing data</div>;
     return (
       <div>
         <h2>blogs</h2>
@@ -123,7 +132,7 @@ const App = () => {
         {user.username} is logged in
         <button onClick={logout}>logout</button>
         <h2>list of blogs</h2>
-        {blogs.map((blog) => (
+        {sortedBlogs.map((blog) => (
           <Blog
             key={blog.id}
             blog={blog}
