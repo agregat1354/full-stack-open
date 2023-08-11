@@ -37,4 +37,19 @@ export const useNotificationDispatch = () => {
   return notificationHook[1];
 };
 
+export const useShowNotification = () => {
+  const [, dispatchNotification] = useContext(NotificationContext);
+
+  return (text, type, durationInSeconds) => {
+    dispatchNotification({
+      type: "SET_NOTIFICATION",
+      payload: { notification: text, type },
+    });
+    setTimeout(
+      () => dispatchNotification({ type: "REMOVE_NOTIFICATION" }),
+      durationInSeconds * 1000
+    );
+  };
+};
+
 export default NotificationContextProvider;

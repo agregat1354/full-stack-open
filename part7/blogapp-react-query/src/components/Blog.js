@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useUserValue } from "../UserContext";
 
-const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
+const Blog = ({ blog, updateBlog, deleteBlog }) => {
+  const user = useUserValue();
+  if (!user) return null;
   const [longFormVisible, setLongFormVisible] = useState(false);
 
   const blogStyle = {
@@ -32,7 +35,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, isOwnedByCurrentUser }) => {
   const showWhenLongFormVisible = { display: longFormVisible ? "" : "none" };
 
   const showWhenOwnedByCurrentUser = {
-    display: isOwnedByCurrentUser ? "" : "none",
+    display: blog.user.username === user.username ? "" : "none",
   };
 
   return (
