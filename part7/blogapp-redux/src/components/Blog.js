@@ -35,12 +35,6 @@ const Blog = ({ blog, updateBlog }) => {
   const hideWhenLongFormVisible = { display: longFormVisible ? "none" : "" };
   const showWhenLongFormVisible = { display: longFormVisible ? "" : "none" };
 
-  /*
-  const showWhenOwnedByCurrentUser = {
-    display: isOwnedByCurrentUser ? "" : "none",
-  };
-  */
-
   const showWhenOwnedByCurrentUser = {
     display: blog.user.username === username ? "" : "none",
   };
