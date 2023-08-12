@@ -81,6 +81,20 @@ const App = () => {
     },
   });
 
+  const appendCommentToBlog = useMutation(blogService.appendCommentToBlog, {
+    onSuccess: (updatedBlog) => {
+      queryClient.setQueryData(
+        "blogs",
+        blogsQuery.data.map((blog) =>
+          blog.id === updatedBlog.id ? updatedBlog : blog
+        )
+      );
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   const handleBlogUpdate = async (updatedBlogObject) => {
     updateBlog.mutate(updatedBlogObject);
   };
@@ -102,6 +116,10 @@ const App = () => {
 
   const handleBlogCreate = async (blogObject) => {
     createBlog.mutate(blogObject);
+  };
+
+  const handleAppendComment = (comment) => {
+    appendCommentToBlog.mutate(comment);
   };
 
   return (
@@ -126,6 +144,7 @@ const App = () => {
               blog={currentBlog}
               deleteBlog={handleBlogDelete}
               updateBlog={handleBlogUpdate}
+              appendComment={handleAppendComment}
             />
           }
         />

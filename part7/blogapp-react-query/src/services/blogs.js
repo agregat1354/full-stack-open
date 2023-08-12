@@ -51,7 +51,7 @@ const deleteBlog = async (id) => {
   return id;
 };
 
-const appendCommentToBlog = async (blogId, comment) => {
+const appendCommentToBlog = async ({ blogId, comment }) => {
   const config = {
     headers: {
       Authorization: token,
