@@ -21,6 +21,10 @@ const blogSlice = createSlice({
       );
       return blogs.toSorted((b1, b2) => b2.likes - b1.likes);
     },
+    appendCommentToBlog: (state, { payload: { blogId, comment } }) => {
+      const blogToAppentCommentTo = state.find((blog) => blog.id === blogId);
+      blogToAppentCommentTo.comments.push(comment);
+    },
   },
 });
 
@@ -85,6 +89,19 @@ export const updateBlog = (updatedBlog) => {
       dispatch(blogSlice.actions.updateBlog(updatedBlogResponse));
     } catch (error) {
       console.log("error in updateBlog, error message: ", error.message);
+    }
+  };
+};
+
+export const appendCommentToBlog = (blogId, comment) => {
+  return async (dispatch) => {
+    try {
+      const commentAdded = await blogService.createComment(blogId, comment);
+      dispatch(
+        blogSlice.actions.appendCommentToBlog({ blogId, comment: commentAdded })
+      );
+    } catch (error) {
+      console.error("error while adding comment: ", error.message);
     }
   };
 };
