@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { useQueryClient, useQuery, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import blogService from "../services/blogs.js";
 import { useShowNotification } from "../NotificationContext";
 import { useUserValue } from "../UserContext";
@@ -9,18 +9,12 @@ import BlogForm from "./BlogForm";
 import Notification from "./Notification.js";
 import Navigation from "./Navigation.js";
 
-const Blogs = () => {
+const Blogs = ({ blogsQuery: { isLoading, isError, data: blogs, error } }) => {
   const [sortedBlogs, setSortedBlogs] = useState(null);
   const user = useUserValue();
   const showNotification = useShowNotification();
   const blogFormRef = useRef();
   const queryClient = useQueryClient();
-  const {
-    isLoading,
-    isError,
-    data: blogs,
-    error,
-  } = useQuery("blogs", blogService.getAll);
 
   useEffect(() => {
     if (!blogs) return;

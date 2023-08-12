@@ -1,6 +1,4 @@
 import Navigation from "./Navigation";
-import { useQuery } from "react-query";
-import userService from "../services/users.js";
 import { Link } from "react-router-dom";
 
 const UserStatRow = ({ user }) => {
@@ -32,14 +30,7 @@ const StatTable = ({ users }) => {
   );
 };
 
-const Users = () => {
-  const {
-    isLoading,
-    isError,
-    data: users,
-    error,
-  } = useQuery("users", userService.getAll);
-
+const Users = ({ usersQuery: { isLoading, isError, data: users, error } }) => {
   if (isLoading) return <div>...loading</div>;
   if (isError) return <div>error: {error.message}</div>;
 

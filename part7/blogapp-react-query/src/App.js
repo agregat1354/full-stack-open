@@ -6,13 +6,13 @@ import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
 import Users from "./components/Users";
 import User from "./components/User";
-import { useParams, useMatch } from "react-router-dom";
+import { useMatch } from "react-router-dom";
+import { useQuery } from "react-query";
+import blogService from "./services/blogs";
+import userService from "./services/users";
 
 const App = () => {
-  const params = useParams();
-  const result = useMatch("/users/:id");
-  console.log("result: ", result);
-  console.log("params in app: ", params);
+  console.log("app gets rerendered");
   const navigate = useNavigate();
   const user = useUserValue();
   useEffect(() => {
@@ -20,13 +20,22 @@ const App = () => {
     navigate("/login");
   }, [user]);
 
+  const blogsQuery = useQuery("blogs", blogService.getAll);
+  const usersQuery = useQuery("users", userService.getAll);
+
+  const match = useMatch("/users/:id");
+  const currentUser =
+    match && usersQuery.data
+      ? usersQuery.data.find((user) => user.id === match.params.id)
+      : null;
+
   return (
     <>
       <Routes>
-        <Route path="/" element={<Blogs />} />
-        <Route path="/users" element={<Users />} />
+        <Route path="/" element={<Blogs blogsQuery={blogsQuery} />} />
+        <Route path="/users" element={<Users usersQuery={usersQuery} />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/users/:id" element={<User />} />
+        <Route path="/users/:id" element={<User user={currentUser} />} />
       </Routes>
     </>
   );
