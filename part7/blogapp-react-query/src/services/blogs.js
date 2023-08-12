@@ -47,8 +47,8 @@ const deleteBlog = async (id) => {
       Authorization: token,
     },
   };
-  const response = await axios.delete(`${baseUrl}/${id}`, config);
-  return response.data;
+  await axios.delete(`${baseUrl}/${id}`, config);
+  return id;
 };
 
 const appendCommentToBlog = async (blogId, comment) => {
