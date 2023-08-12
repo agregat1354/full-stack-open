@@ -5,6 +5,7 @@ import NotificationContextProvider from "./NotificationContext.js";
 import UserContextProvider from "./UserContext";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { BrowserRouter as Router } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const queryClient = new QueryClient();
 
