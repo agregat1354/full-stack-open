@@ -1,10 +1,50 @@
 import Navigation from "./Navigation";
+import { useQuery } from "react-query";
+import userService from "../services/users.js";
+
+const UserStatRow = ({ user }) => {
+  return (
+    <tr>
+      <td>{user.name}</td>
+      <td>{user.blogs.length}</td>
+    </tr>
+  );
+};
+
+const StatTable = ({ users }) => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th>blogs created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((user) => (
+          <UserStatRow key={user.username} user={user} />
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 const Users = () => {
+  const {
+    isLoading,
+    isError,
+    data: users,
+    error,
+  } = useQuery("users", userService.getAll);
+
+  if (isLoading) return <div>...loading</div>;
+  if (isError) return <div>error: {error.message}</div>;
+
   return (
     <div>
       <Navigation />
-      <h1>There will be users view...</h1>
+      <h2>Users</h2>
+      <StatTable users={users} />
     </div>
   );
 };

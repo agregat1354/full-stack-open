@@ -3,7 +3,6 @@ import { useUserValue } from "../UserContext";
 
 const Blog = ({ blog, updateBlog, deleteBlog }) => {
   const user = useUserValue();
-  if (!user) return null;
   const [longFormVisible, setLongFormVisible] = useState(false);
 
   const blogStyle = {
