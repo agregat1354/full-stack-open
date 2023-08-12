@@ -96,10 +96,8 @@ export const updateBlog = (updatedBlog) => {
 export const appendCommentToBlog = (blogId, comment) => {
   return async (dispatch) => {
     try {
-      const commentAdded = await blogService.createComment(blogId, comment);
-      dispatch(
-        blogSlice.actions.appendCommentToBlog({ blogId, comment: commentAdded })
-      );
+      await blogService.createComment(blogId, comment);
+      dispatch(blogSlice.actions.appendCommentToBlog({ blogId, comment }));
     } catch (error) {
       console.error("error while adding comment: ", error.message);
     }
