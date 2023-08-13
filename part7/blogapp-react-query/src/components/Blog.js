@@ -1,6 +1,10 @@
+/* eslint-disable indent */
 import Navigation from "./Navigation";
 import { useState } from "react";
 import { useUserValue } from "../UserContext";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import ListGroup from "react-bootstrap/ListGroup";
 
 const Blog = ({ blog, updateBlog, deleteBlog, appendComment }) => {
   if (!blog) return null;
@@ -39,29 +43,43 @@ const Blog = ({ blog, updateBlog, deleteBlog, appendComment }) => {
       <a href={blog.url}>{blog.url}</a>
       <br />
       <span>{blog.likes} likes </span>
-      <button onClick={handleLike}>like</button>
+      <Button variant="secondary" onClick={handleLike}>
+        like
+      </Button>
       <br />
       <span>added by {user.name}</span>
       <br />
-      <button style={showWhenOwnedByCurrentUser} onClick={handleDelete}>
+      <Button
+        variant="danger"
+        style={showWhenOwnedByCurrentUser}
+        onClick={handleDelete}
+      >
         remove
-      </button>
+      </Button>
       <h2>comments</h2>
-      <form onSubmit={handleCommentAppend}>
-        <input
+      <Form
+        className="d-flex w-25 border border-3 border-light-subtle rounded p-2"
+        onSubmit={handleCommentAppend}
+      >
+        <Form.Control
+          style={{ height: 35, marginInlineEnd: 5 }}
           placeholder="write your comment here..."
           type="text"
           name="Comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
-        <button type="submit">add comment</button>
-      </form>
-      <ul>
+        <Button style={{ height: 35 }} variant="primary" type="submit">
+          add comment
+        </Button>
+      </Form>
+      <ListGroup>
         {blog.comments.length
-          ? blog.comments.map((comment) => <li key={comment}>{comment}</li>)
+          ? blog.comments.map((comment) => (
+              <ListGroup.Item key={comment}>{comment}</ListGroup.Item>
+            ))
           : null}
-      </ul>
+      </ListGroup>
     </div>
   );
 };

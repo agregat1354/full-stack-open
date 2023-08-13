@@ -2,6 +2,8 @@
 /* eslint-disable semi */
 import PropTypes from "prop-types";
 import { useState } from "react";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState("");
@@ -16,39 +18,43 @@ const BlogForm = ({ createBlog }) => {
     createBlog({ title, author, url });
   };
 
+  const labelStyle = {
+    display: "block",
+    marginTop: 18,
+  };
+
   return (
-    <div>
+    <div className="w-25 border border-3 border-success rounded p-3">
       <h2>create new</h2>
-      <form onSubmit={handleBlogFormSubmission}>
-        title
-        <input
+      <Form onSubmit={handleBlogFormSubmission}>
+        <Form.Label style={labelStyle}>title</Form.Label>
+        <Form.Control
           type="text"
           name="Title"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
           placeholder="title of the blog"
         />
-        <br />
-        author
-        <input
+        <Form.Label style={labelStyle}>author</Form.Label>
+        <Form.Control
           type="text"
           name="Author"
           value={author}
           onChange={({ target }) => setAuthor(target.value)}
           placeholder="blog's author"
         />
-        <br />
-        url
-        <input
+        <Form.Label style={labelStyle}>url</Form.Label>
+        <Form.Control
           type="text"
           name="Url"
           value={url}
           onChange={({ target }) => setUrl(target.value)}
           placeholder="e.g https://www.blogs.com/exampleBlog"
         />
-        <br />
-        <button type="submit">add blog</button>
-      </form>
+        <Button style={{ marginTop: 10 }} variant="primary" type="submit">
+          add blog
+        </Button>
+      </Form>
     </div>
   );
 };

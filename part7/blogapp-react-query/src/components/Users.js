@@ -1,5 +1,6 @@
 import Navigation from "./Navigation";
 import { Link } from "react-router-dom";
+import Table from "react-bootstrap/Table";
 
 const UserStatRow = ({ user }) => {
   return (
@@ -14,7 +15,7 @@ const UserStatRow = ({ user }) => {
 
 const StatTable = ({ users }) => {
   return (
-    <table>
+    <Table striped bordered hover>
       <thead>
         <tr>
           <th>&nbsp;</th>
@@ -26,7 +27,7 @@ const StatTable = ({ users }) => {
           <UserStatRow key={user.username} user={user} />
         ))}
       </tbody>
-    </table>
+    </Table>
   );
 };
 

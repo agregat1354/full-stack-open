@@ -5,7 +5,10 @@ import NotificationContextProvider from "./NotificationContext.js";
 import UserContextProvider from "./UserContext";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { BrowserRouter as Router } from "react-router-dom";
+// Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 const queryClient = new QueryClient();
 

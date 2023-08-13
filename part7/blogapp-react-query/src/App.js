@@ -12,6 +12,7 @@ import blogService from "./services/blogs";
 import userService from "./services/users";
 import { useShowNotification } from "./NotificationContext";
 import Blog from "./components/Blog";
+import Container from "react-bootstrap/Container";
 
 const App = () => {
   const navigate = useNavigate();
@@ -123,7 +124,7 @@ const App = () => {
   };
 
   return (
-    <>
+    <Container>
       <Routes>
         <Route
           path="/"
@@ -149,7 +150,7 @@ const App = () => {
           }
         />
       </Routes>
-    </>
+    </Container>
   );
 };
 
