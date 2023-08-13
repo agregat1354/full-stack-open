@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../reducers/userReducer";
-import { showNotification } from "../reducers/notificationReducer";
 import { useNavigate } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Notification from "./Notification";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -12,38 +15,37 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      dispatch(loginUser({ username, password }));
-      dispatch(showNotification("Succesfully logged in", "info", 5));
-      navigate("/");
-    } catch (err) {
-      dispatch(showNotification(err.response.data.error, "error", 5));
-    }
+    dispatch(loginUser({ username, password }, () => navigate("/")));
     setUsername("");
     setPassword("");
   };
 
   return (
     <>
-      <h2>Log in to application</h2>
+      <Notification />
       <form onSubmit={handleLogin}>
-        username
-        <input
-          type="text"
-          name="Username"
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
-        />
-        <br />
-        password
-        <input
-          type="password"
-          name="Password"
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
-        <br />
-        <button type="submit">login</button>
+        <Stack style={{ width: 400, margin: "auto" }} spacing={2}>
+          <h2>Log in to application</h2>
+          <TextField
+            label="username"
+            variant="outlined"
+            type="text"
+            name="Username"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+          <TextField
+            label="password"
+            variant="outlined"
+            type="password"
+            name="Password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+          <Button variant="contained" type="submit">
+            login
+          </Button>
+        </Stack>
       </form>
     </>
   );

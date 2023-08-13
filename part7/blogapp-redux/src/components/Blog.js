@@ -7,6 +7,13 @@ import {
 } from "../reducers/blogReducer";
 import { useParams } from "react-router-dom";
 import Navigation from "./Navigation";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Grid from "@mui/material/Grid";
 
 const Blog = () => {
   const blogId = useParams().id;
@@ -45,35 +52,59 @@ const Blog = () => {
   return (
     <div>
       <Navigation />
-      <h2>{blog.title}</h2>
-      <a href={blog.url}>{blog.url}</a>
-      <br />
-      <span>{blog.likes} likes</span>
-      <button onClick={handleLike}>like</button>
-      <br />
-      <span>added by {blog.user.name}</span>
-      <br />
-      <button style={showWhenOwnedByCurrentUser} onClick={handleDelete}>
+      <Stack spacing={2} style={{ width: 300 }}>
+        <h2>{blog.title}</h2>
+        <a href={blog.url}>{blog.url}</a>
+        <div>
+          <span>{blog.likes} likes</span>
+          <Button
+            style={{ marginLeft: 10 }}
+            variant="contained"
+            onClick={handleLike}
+          >
+            like
+          </Button>
+        </div>
+        <span>added by {blog.user.name}</span>
+      </Stack>
+      <Button
+        variant="contained"
+        style={{
+          ...showWhenOwnedByCurrentUser,
+          backgroundColor: "red",
+          marginTop: 10,
+        }}
+        onClick={handleDelete}
+      >
         remove
-      </button>
+      </Button>
       <h2>comments:</h2>
       <form onSubmit={handleCommentSubmit}>
-        <input
-          placeholder="write your comment here"
-          type="text"
-          name="Comment"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <button type="submit">add comment</button>
+        <Grid container alignItems="center" direction="row">
+          <TextField
+            variant="outlined"
+            placeholder="write your comment here"
+            type="text"
+            name="Comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <Button sx={{ marginLeft: "10px" }} variant="contained" type="submit">
+            add comment
+          </Button>
+        </Grid>
       </form>
-      <ul>
+      <List>
         {blog.comments.length ? (
-          blog.comments.map((comment) => <li key={comment}>{comment}</li>)
+          blog.comments.map((comment) => (
+            <ListItem key={comment}>
+              <ListItemText primary={comment} />
+            </ListItem>
+          ))
         ) : (
           <p>no comments yet...</p>
         )}
-      </ul>
+      </List>
     </div>
   );
 };

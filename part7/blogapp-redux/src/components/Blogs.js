@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { createBlog } from "../reducers/blogReducer";
 import Togglable from "./Togglable";
 import BlogForm from "./BlogForm";
-import { Link } from "react-router-dom";
+
+import BlogList from "./BlogList";
 
 const Blogs = () => {
   const dispatch = useDispatch();
@@ -17,28 +18,13 @@ const Blogs = () => {
     dispatch(createBlog(blogObject));
   };
 
-  const blogWrapperDivStyle = {
-    display: "block",
-    borderColor: "black",
-    borderWidth: 2,
-    borderStyle: "solid",
-    padding: 5,
-    margin: 10,
-  };
-
   return (
     <div>
       <Navigation />
       <h2>blogs</h2>
       <Notification />
       <h2>list of blogs</h2>
-      {blogs.map((blog) => (
-        <div key={blog.id} style={blogWrapperDivStyle}>
-          <Link to={`/blogs/${blog.id}`}>
-            {blog.title} {blog.author}
-          </Link>
-        </div>
-      ))}
+      <BlogList blogs={blogs} />
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={handleCreateNewBlog} />
       </Togglable>

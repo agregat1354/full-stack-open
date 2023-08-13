@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import loginService from "../services/login.js";
 import blogService from "../services/blogs.js";
+import { showNotification } from "./notificationReducer.js";
 
 const retrieveUserFromLocalStorage = () => {
   const userFromLocalStorage = window.localStorage.getItem("loggedBlogappUser");
@@ -25,16 +26,22 @@ const userSlice = createSlice({
   },
 });
 
-export const loginUser = ({ username, password }) => {
+export const loginUser = ({ username, password }, onSuccessCallback) => {
   return async (dispatch) => {
-    const responseUser = await loginService.login({ username, password });
-    blogService.setToken(responseUser.token);
+    try {
+      const responseUser = await loginService.login({ username, password });
+      blogService.setToken(responseUser.token);
 
-    window.localStorage.setItem(
-      "loggedBlogappUser",
-      JSON.stringify(responseUser)
-    );
-    dispatch(userSlice.actions.setUser(responseUser));
+      window.localStorage.setItem(
+        "loggedBlogappUser",
+        JSON.stringify(responseUser)
+      );
+      dispatch(userSlice.actions.setUser(responseUser));
+      dispatch(showNotification("Succesfully logged in", "info", 5));
+      onSuccessCallback();
+    } catch (error) {
+      dispatch(showNotification(error.response.data.error, "error", 5));
+    }
   };
 };
 

@@ -3,6 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../reducers/userReducer";
 import { useNavigate } from "react-router-dom";
 import { showNotification } from "../reducers/notificationReducer";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -14,19 +17,34 @@ const Navigation = () => {
   };
   const user = useSelector((state) => state.user);
   const linkStyle = {
-    padding: 5,
+    margin: 5,
   };
+
   return (
-    <div>
-      <Link style={linkStyle} to="/">
-        blogs
-      </Link>
-      <Link style={linkStyle} to="/users">
-        users
-      </Link>
-      {user.username} is logged in
-      <button onClick={logout}>logout</button>
-    </div>
+    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={3}>
+          <Button style={linkStyle} component={Link} to="/" variant="contained">
+            blogs
+          </Button>
+          <Button
+            style={linkStyle}
+            component={Link}
+            to="/users"
+            variant="contained"
+          >
+            users
+          </Button>
+        </Grid>
+        <Grid item xs={6}></Grid>
+        <Grid item xs={3}>
+          <span>{user.username} is logged in</span>
+          <Button style={linkStyle} variant="outlined" onClick={logout}>
+            logout
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

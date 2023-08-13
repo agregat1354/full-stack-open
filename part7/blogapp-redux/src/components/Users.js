@@ -2,33 +2,42 @@ import Navigation from "./Navigation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import userService from "../services/users";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import Paper from "@mui/material/Paper";
 
 const UserRow = ({ user }) => {
   return (
-    <tr>
-      <td>
+    <TableRow>
+      <TableCell>
         <Link to={`/users/${user.id}`}>{user.name}</Link>
-      </td>
-      <td>{user.blogs.length}</td>
-    </tr>
+      </TableCell>
+      <TableCell>{user.blogs.length}</TableCell>
+    </TableRow>
   );
 };
 
 const StatTable = ({ users }) => {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>&nbsp;</th>
-          <th>blogs created</th>
-        </tr>
-      </thead>
-      <tbody>
-        {users.map((user) => (
-          <UserRow key={user.id} user={user} />
-        ))}
-      </tbody>
-    </table>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>blogs created</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {users.map((user) => (
+            <UserRow key={user.id} user={user} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

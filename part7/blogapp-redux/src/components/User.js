@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navigation from "./Navigation";
+import BlogList from "./BlogList";
 
 const User = () => {
   const userId = useParams().id;
@@ -25,11 +26,7 @@ const User = () => {
       <Navigation />
       <h2>{user.name}</h2>
       <h3>Added blogs</h3>
-      <ul>
-        {currentUsersBlogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
+      <BlogList blogs={currentUsersBlogs} />
     </div>
   );
 };
