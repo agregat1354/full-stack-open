@@ -13,13 +13,32 @@ const notificationSlice = createSlice({
   },
 });
 
+const clearTimeouts = () => {
+  const highestId = window.setTimeout(() => {
+    for (let i = highestId; i >= 0; i--) {
+      window.clearInterval(i);
+    }
+  }, 0);
+};
+
 export const showNotification = (text, type, timeInSeconds) => {
   return async (dispatch) => {
-    dispatch(notificationSlice.actions.setNotification({ text, type }));
-    setTimeout(
-      () => dispatch(notificationSlice.actions.removeNotification()),
-      timeInSeconds * 1000
-    );
+    clearTimeouts();
+    dispatch(notificationSlice.actions.removeNotification());
+    setTimeout(() => {
+      dispatch(notificationSlice.actions.setNotification({ text, type }));
+      setTimeout(() => {
+        dispatch(notificationSlice.actions.removeNotification());
+        clearTimeouts();
+      }, timeInSeconds * 1000);
+    }, 100);
+  };
+};
+
+export const removeNotifications = () => {
+  return (dispatch) => {
+    clearTimeouts();
+    dispatch(notificationSlice.actions.removeNotification());
   };
 };
 
