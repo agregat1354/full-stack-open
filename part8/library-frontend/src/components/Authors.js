@@ -1,5 +1,5 @@
 import Navigation from "./Navigation";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { ALL_AUTHORS } from "./queries";
 
 const Authors = () => {

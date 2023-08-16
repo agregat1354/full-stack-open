@@ -31,14 +31,9 @@ const NewBook = () => {
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
 
-  const { loading, error, data } = useQuery(ALL_BOOKS);
   const [addBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
   });
-
-  if (loading) return <div>loading...</div>;
-  if (error) return <div>error: {error.message}</div>;
-  console.log(data.allBooks);
 
   const submit = async (event) => {
     event.preventDefault();
