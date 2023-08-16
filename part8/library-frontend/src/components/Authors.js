@@ -1,11 +1,11 @@
-const Authors = (props) => {
-  if (!props.show) {
-    return null
-  }
-  const authors = []
+import Navigation from "./Navigation";
+
+const Authors = () => {
+  const authors = [];
 
   return (
     <div>
+      <Navigation />
       <h2>authors</h2>
       <table>
         <tbody>
@@ -24,7 +24,7 @@ const Authors = (props) => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default Authors
+export default Authors;

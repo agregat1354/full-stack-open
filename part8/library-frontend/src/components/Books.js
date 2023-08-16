@@ -1,12 +1,11 @@
-const Books = (props) => {
-  if (!props.show) {
-    return null
-  }
+import Navigation from "./Navigation";
 
-  const books = []
+const Books = () => {
+  const books = [];
 
   return (
     <div>
+      <Navigation />
       <h2>books</h2>
 
       <table>
@@ -26,7 +25,7 @@ const Books = (props) => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default Books
+export default Books;
