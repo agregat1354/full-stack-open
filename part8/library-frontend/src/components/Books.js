@@ -1,7 +1,21 @@
 import Navigation from "./Navigation";
+import { useQuery, gql } from "@apollo/client";
+
+const ALL_BOOKS = gql`
+  query AllBooks {
+    allBooks {
+      title
+      author
+      published
+    }
+  }
+`;
 
 const Books = () => {
-  const books = [];
+  const { loading, error, data } = useQuery(ALL_BOOKS);
+
+  if (loading) return <div>loading...</div>;
+  if (error) return <div>error: {error.message}</div>;
 
   return (
     <div>
@@ -15,7 +29,7 @@ const Books = () => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => (
+          {data.allBooks.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author}</td>
