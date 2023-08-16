@@ -1,15 +1,6 @@
 import Navigation from "./Navigation";
 import { useQuery, gql } from "@apollo/client";
-
-const ALL_AUTHORS = gql`
-  query AllAuthors {
-    allAuthors {
-      name
-      born
-      bookCount
-    }
-  }
-`;
+import { ALL_AUTHORS } from "./queries";
 
 const Authors = () => {
   const { loading, error, data } = useQuery(ALL_AUTHORS);
