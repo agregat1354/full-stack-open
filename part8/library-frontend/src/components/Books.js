@@ -1,6 +1,6 @@
 import Navigation from "./Navigation";
-import { useQuery, gql } from "@apollo/client";
-import { ALL_BOOKS } from "./queries";
+import { useQuery } from "@apollo/client";
+import { ALL_BOOKS } from "../queries";
 
 const Books = () => {
   const { loading, error, data } = useQuery(ALL_BOOKS);

@@ -1,12 +1,15 @@
 import Navigation from "./Navigation";
 import { useQuery } from "@apollo/client";
-import { ALL_AUTHORS } from "./queries";
+import { ALL_AUTHORS } from "../queries";
+import EditAuthorBirthYear from "./EditAuthorBirthYear";
+import EditAuthorBirthYearSelect from "./EditAuthorBirthYearSelect";
 
 const Authors = () => {
   const { loading, error, data } = useQuery(ALL_AUTHORS);
 
   if (loading) return <div>loading...</div>;
   if (error) return <div>error: {error.message}</div>;
+
   return (
     <div>
       <Navigation />
@@ -27,6 +30,8 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
+      <EditAuthorBirthYear />
+      <EditAuthorBirthYearSelect authors={data.allAuthors} />
     </div>
   );
 };

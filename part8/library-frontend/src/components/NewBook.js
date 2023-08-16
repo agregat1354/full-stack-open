@@ -1,7 +1,7 @@
 import Navigation from "./Navigation";
 import { useState } from "react";
-import { useMutation, gql, useQuery } from "@apollo/client";
-import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
+import { useMutation, gql } from "@apollo/client";
+import { ALL_AUTHORS, ALL_BOOKS } from "../queries";
 
 const ADD_BOOK = gql`
   mutation AddBook(
@@ -38,7 +38,6 @@ const NewBook = () => {
   const submit = async (event) => {
     event.preventDefault();
 
-    console.log("add book...");
     addBook({
       variables: { title, author, published: Number(published), genres },
     });
