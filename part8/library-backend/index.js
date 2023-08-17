@@ -21,7 +21,7 @@ const typeDefs = `
   type Book {
     title: String!
     published: Int!
-    author: String!
+    author: Author!
     id: ID!
     genres: [String!]!
   }
@@ -52,56 +52,54 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       if (args.author && args.genre) {
-        console.log("args.author && args.genre");
-        console.log(args);
+        const author = await Author.findOne({ name: args.author });
+        if (!author) return [];
         return Book.find({
-          author: args.author,
-          genres: { $elemMatch: args.genre },
+          author: author._id,
+          genres: args.genre,
         });
       }
       if (args.author) {
-        console.log("args.author");
-        console.log(args);
-        return Book.find({ author: args.author });
+        const author = await Author.findOne({ name: args.author });
+        if (!author) return [];
+        return Book.find({ author: author._id });
       }
       if (args.genre) {
-        console.log("args.genre");
-        console.log(args);
-        return Book.find({ genres: { $elemMatch: args.genre } });
+        return Book.find({ genres: args.genre });
       }
       return Book.find({});
     },
-    allAuthors: () => authors,
+    allAuthors: async () => Author.find({}),
   },
   Author: {
-    bookCount: (root) =>
-      books.reduce(
-        (sum, currBook) => (currBook.author === root.name ? sum + 1 : sum),
-        0
-      ),
+    bookCount: async (root) => Book.countDocuments({ author: root.id }),
+  },
+  Book: {
+    author: async (root) => Author.findOne({ _id: root.author }),
   },
   Mutation: {
-    addBook: (root, args) => {
-      if (!authors.find((a) => a.name === args.author)) {
-        authors.push({ name: args.author, id: uuid() });
-      }
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: args.author });
+      if (!author) author = await new Author({ name: args.author }).save();
 
-      const newBook = {
+      console.log("saved author: ", author);
+
+      const newBookObj = {
         title: args.title,
-        author: args.author,
+        author: author._id,
         published: args.published,
         genres: args.genres,
-        id: uuid(),
       };
 
-      books.push(newBook);
-      return newBook;
+      const savedBook = await new Book(newBookObj).save();
+      return savedBook;
     },
-    editAuthor: (root, args) => {
-      const authorToEdit = authors.find((a) => a.name === args.name);
-      if (!authorToEdit) return null;
-      authorToEdit.born = args.setBornTo;
-      return authorToEdit;
+    editAuthor: async (root, args) => {
+      return Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true, runValidators: true }
+      );
     },
   },
 };
